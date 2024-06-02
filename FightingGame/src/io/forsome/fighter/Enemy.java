@@ -62,5 +62,6 @@ public class Enemy extends Fighter{
     @Override
     public void createFighter() {
         fighterSprite.draw();
+        fighterSprite.grow(130,130);
     }
 }

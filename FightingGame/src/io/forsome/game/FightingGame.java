@@ -23,6 +23,8 @@ public class FightingGame implements KeyboardHandler {
     private Keyboard keyboard;
     private int round;
     private int timer;
+    private int playerWins;
+    private int enemyWins;
 
     public FightingGame() {
         Rectangle gameScene = new Rectangle(10, 10, 1030, 603);
@@ -31,6 +33,8 @@ public class FightingGame implements KeyboardHandler {
         this.keyboard = new Keyboard(this);
         addKeyboard();
         gameScene.draw();
+        playerHealth = new HealthBar(20,20,200);
+        enemyHealth = new HealthBar(20,20,200);
     }
 
     public void addKeyboard() {
@@ -45,7 +49,7 @@ public class FightingGame implements KeyboardHandler {
         Background.limitCanvas();
         Rectangle screen = new Rectangle(10, 10, 1030, 603);
         screen.draw();
-        Picture menu = new Picture(10, 10, "rsc/menu.png");
+        Picture menu = new Picture(10, 10, "rsc/meno-comIntrucao.png");
         menu.draw();
     }
 
@@ -54,19 +58,19 @@ public class FightingGame implements KeyboardHandler {
         Background background = new Background();
         background.createBackground();
         // Player Creation
-        player = new Player(new Picture(200, 300, "rsc/player.png"),
+        player = new Player(new Picture(200, 200, "rsc/player.png"),
                 new HealthBar(50, 50, 200),
-                new Position(200, 300));
+                new Position(200, 200));
         player.createFighter();
 
         // Enemy Creation
-        enemy = new Enemy(new Picture(200, 300, "rsc/enemy.png"),
+        enemy = new Enemy(new Picture(200, 200, "rsc/enemy.png"),
                 new HealthBar(780, 50, 200),
-                new Position(830, 300));
+                new Position(800, 200));
         enemy.createFighter();
 
         // Main game loop:
-        while (round > 0) {
+        while (playerWins != 2 || enemyWins != 2) {
             playRound();
             round--;
         }
@@ -82,11 +86,25 @@ public class FightingGame implements KeyboardHandler {
         enemyHealth.reset();
         timer = 60;
 
+
         // Round logic here
         while (timer > 0) {
             updateGame();
             Canvas.pause(); // Wait for 1 second
             timer--;
+           System.out.println(timer);
+            if(enemyHealth.getHealth() <= 0){
+                playerWins++;
+                return;
+                // load a picture of 1 round won like a start under health bar
+
+            }
+            if(playerHealth.getHealth() <= 0){
+                enemyWins++;
+                return;
+                // load a picture of 1 round won like a start under health bar
+
+            }
         }
     }
 

@@ -19,6 +19,9 @@ public class HealthBar {
         return lifeBar;
     }
 
+    public int getHealth(){
+        return health;
+    }
     public void damage(int value) {
         health -= value;
         if (health <= 50) {

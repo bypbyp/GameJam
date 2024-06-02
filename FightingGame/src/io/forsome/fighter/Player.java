@@ -29,6 +29,7 @@ public class Player extends Fighter implements KeyboardHandler{
 
     public void createFighter(){
         fighterSprite.draw();
+        fighterSprite.grow(130,130);
     }
 
     public Position getPosition(){
@@ -117,15 +118,30 @@ public class Player extends Fighter implements KeyboardHandler{
     @Override
     public void keyPressed(KeyboardEvent keyboardEvent) {
         switch (keyboardEvent.getKey()) {
-            case KeyboardEvent.KEY_D -> moveRight();
-            case KeyboardEvent.KEY_A -> moveLeft();
-            case KeyboardEvent.KEY_W -> jump();
-            case KeyboardEvent.KEY_S -> crouch();
-
-            case KeyboardEvent.KEY_H -> lightPunch();
-            case KeyboardEvent.KEY_J -> heavyPunch();
-            case KeyboardEvent.KEY_K -> lightKick();
-            case KeyboardEvent.KEY_L -> heavyKick();
+            case KeyboardEvent.KEY_D:
+                moveRight();
+                break;
+            case KeyboardEvent.KEY_A:
+                moveLeft();
+                break;
+            case KeyboardEvent.KEY_W:
+                jump();
+                break;
+            case KeyboardEvent.KEY_S:
+                crouch();
+                break;
+            case KeyboardEvent.KEY_H:
+                lightPunch();
+                break;
+            case KeyboardEvent.KEY_J:
+                heavyPunch();
+                break;
+            case KeyboardEvent.KEY_K:
+                lightKick();
+                break;
+            case KeyboardEvent.KEY_L:
+                heavyKick();
+                break;
         }
     }
 
