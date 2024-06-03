@@ -8,23 +8,21 @@ public class HealthBar {
     private Rectangle lifeBar;
     private int health;
 
-    public HealthBar(int health) {
+    public HealthBar(int x, int y, int health) {
         this.health = health;
-        this.lifeBar = new Rectangle();
 
     }
-    public Rectangle createLifeBar(){
+    public void createLifeBar(){
         lifeBar.setColor(Color.GREEN);
         lifeBar.fill();
-        return lifeBar;
     }
 
     public int getHealth(){
         return health;
     }
+
     public void damage(int value) {
         health -= value;
-
         if (health <= 50) {
             lifeBar.setColor(Color.YELLOW);
         }
@@ -39,5 +37,9 @@ public class HealthBar {
         health = 100;
         createLifeBar();
         //lifeBar.setSize(100, 10);
+    }
+
+    public void showLifeBar(){
+        lifeBar.draw();
     }
 }

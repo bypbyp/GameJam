@@ -8,7 +8,9 @@ import static org.academiadecodigo.simplegraphics.graphics.Canvas.*;
 public class Background {
     Picture backgroundRelva = new Picture(10, 10, "rsc/BackGroundRelva.JPG");
     Picture backgroundSala = new Picture(10, 10, "rsc/BackGroundSala.JPG");
+
     Picture menu = new Picture(10, 10, "rsc/meno-comIntrucao.png");
+
     private int randomBackground;
     public void createBackground() {
         randomBackground = (int) Math.floor(Math.random() * 2);
@@ -26,7 +28,6 @@ public class Background {
     }
 
     public void show(){
-
         menu.draw();
     }
     public void hide(){
