@@ -9,7 +9,7 @@ import org.academiadecodigo.simplegraphics.keyboard.Keyboard;
 import org.academiadecodigo.simplegraphics.keyboard.KeyboardEvent;
 import org.academiadecodigo.simplegraphics.keyboard.KeyboardEventType;
 import org.academiadecodigo.simplegraphics.keyboard.KeyboardHandler;
-import org.academiadecodigo.simplegraphics.pictures.Picture;
+import org.academiadecodigo.simplegraphics.pictures.*;
 
 public class FightingGame implements KeyboardHandler {
 
@@ -25,16 +25,21 @@ public class FightingGame implements KeyboardHandler {
     private int timer;
     private int playerWins;
     private int enemyWins;
+    private Background background;
 
     public FightingGame() {
-        Rectangle gameScene = new Rectangle(10, 10, 1030, 603);
+        //Rectangle gameScene = new Rectangle(10, 10, 1030, 603);
         timer = 60;
         round =3;
         this.keyboard = new Keyboard(this);
         addKeyboard();
-        gameScene.draw();
-        playerHealth = new HealthBar(20,20,200);
-        enemyHealth = new HealthBar(20,20,200);
+        //gameScene.draw();
+        player = new Player( playerHealth,new Position(200,200));
+        enemy = new Enemy(enemyHealth,new Position(800,200));
+        playerHealth = new HealthBar(100);
+        enemyHealth = new HealthBar(100);
+        background = new Background();
+
     }
 
     public void addKeyboard() {
@@ -46,35 +51,25 @@ public class FightingGame implements KeyboardHandler {
 
     public void startGame() {
         // Menu
-        Background.limitCanvas();
-        Rectangle screen = new Rectangle(10, 10, 1030, 603);
-        screen.draw();
-        Picture menu = new Picture(10, 10, "rsc/meno-comIntrucao.png");
-        menu.draw();
+        background.show();
+        background.limitCanvas();
     }
 
     public void gameInit() {
         // Stage Creation
-        Background background = new Background();
         background.createBackground();
         // Player Creation
-        player = new Player(new Picture(200, 200, "rsc/player.png"),
-                new HealthBar(50, 50, 200),
-                new Position(200, 200));
         player.createFighter();
 
         // Enemy Creation
-        enemy = new Enemy(new Picture(200, 200, "rsc/enemy.png"),
-                new HealthBar(780, 50, 200),
-                new Position(800, 200));
         enemy.createFighter();
-
         // Main game loop:
-        while (playerWins != 2 || enemyWins != 2) {
+        while (round >= 1) {
             playRound();
-            round--;
+            System.out.println("KAWABANGA");
         }
-        startGame();
+
+
     }
 
 
@@ -83,42 +78,64 @@ public class FightingGame implements KeyboardHandler {
         player.resetPosition();
         enemy.resetPosition();
         playerHealth.reset();
+        System.out.println(player.getPosition());
         enemyHealth.reset();
+        System.out.println(enemy.getPosition());
         timer = 60;
-
 
         // Round logic here
         while (timer > 0) {
             updateGame();
-            Canvas.pause(); // Wait for 1 second
-            timer--;
-           System.out.println(timer);
+            //background.pause();
+            System.out.println("timer: " + timer);
+            timer--;//this pause is giving error
+            Canvas.pause();// Wait for 1 second
+
             if(enemyHealth.getHealth() <= 0){
                 playerWins++;
+                round--;
+
+                player.setFighterSpriteWon();
+                new Picture(440,100,"rsc/player/roundcounter.png");
                 return;
                 // load a picture of 1 round won like a start under health bar
 
             }
             if(playerHealth.getHealth() <= 0){
                 enemyWins++;
+                round--;
+
+                enemy.setFighterSpriteWon();
+                Picture counter = new Picture(440,100,"rsc/player/roundcounter.png");
+                counter.draw();
                 return;
                 // load a picture of 1 round won like a start under health bar
-
             }
+                if(timer == 0){
+                    //playerHealth.getHealth() > enemyHealth.getHealth() ? playerWins += 1 : enemyWins += 1; //Fix this
+                    return;
+                    }
+
         }
     }
 
     private void updateGame() {
         // Update game state, check for collisions, update health, etc.
-        //enemy.randomMove();
+        enemy.randomMove();
+        player.resetIdlePosition();
         checkCollisions();
+
     }
 
     private void checkCollisions() {
         // Collision detection logic
-        if ((player.getPosition()) == enemy.getPosition()) {
-            playerHealth.damage(10); //Magic number
+        if ((player.getMaxX()) != enemy.getX()) {
+            System.out.println("alabama");
+            playerHealth.damage(10);
+            player.setRectangleOflife(10);//change the rectangle life
             enemyHealth.damage(10);
+            enemy.setRectangleOflife(10);//change the rectangle life
+
         }
     }
 
