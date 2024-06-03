@@ -10,20 +10,20 @@ public class Enemy extends Fighter{
 
     private Position enemyPosition;
     private Picture fighterSprite;
-    private HealthBar healthBar;
-    private Rectangle rectangleOflife;
+    private HealthBar enemyLife;
 
+    public Enemy(Picture fighter) {
+        super(fighter);
 
-    public Enemy( HealthBar healthBar, Position position) {
-        super(healthBar, position);
-        this.enemyPosition = position;
-        this.fighterSprite =  new Picture(800, 400, "rsc/enemy.png");
-        this.healthBar = healthBar;
+        this.fighterSprite = new Picture(enemyPosition.getX(), enemyPosition.getY(), "rsc/player.png");
     }
-    public Rectangle setRectangleOflife(int value) {
-        rectangleOflife.grow(-value,0);
-        rectangleOflife.fill();
-        return rectangleOflife;
+
+    public HealthBar getEnemyLife() {
+        return enemyLife;
+    }
+
+    public int getHealth(){
+        return enemyLife.getHealth();
     }
 
     public Position getPosition(){
@@ -43,7 +43,7 @@ public class Enemy extends Fighter{
     }
 
     public void crouch(){
-        fighterSprite.translate(0,0);
+        fighterSprite.translate(0,30);
     }
 
     public void lightPunch(){
@@ -59,9 +59,8 @@ public class Enemy extends Fighter{
     }
 
     public void heavyKick(){
-        System.out.println(getClass().getSimpleName() + " heavyKick");
+        System.out.println("heavyKick");
     }
-
 
     public void randomMove(){
         int randomNumber = (int)Math.floor(Math.random()*8);
@@ -70,20 +69,21 @@ public class Enemy extends Fighter{
             case 2 -> moveLeft();
             case 3 -> jump();
             case 4 -> crouch();
-
             case 5 -> lightPunch();
             case 6 -> lightKick();
             case 7 -> heavyKick();
             case 8 -> heavyPunch();
-
-
         }
     }
 
-    public void resetPosition() {
-        enemyPosition = new Position(200,800);
+    public void enemyWon(){
+        fighterSprite.load("rsc/player/playerWin.png");
     }
-    public void setFighterSpriteWon(){ fighterSprite.load("rsc/player/playerWin.png");};
+
+    public void enemyLost(){
+        fighterSprite.load("rsc/player/playerLost.png");
+    }
+
     @Override
     public int getX() {
         return fighterSprite.getX();
@@ -104,16 +104,15 @@ public class Enemy extends Fighter{
         return fighterSprite.getMaxY();
     }
 
+
+    public void resetPosition() {
+        fighterSprite.translate(50, 200);
+    }
+
     @Override
     public void createFighter() {
         fighterSprite.draw();
-        //fighterSprite.grow(130,130);
-        this.rectangleOflife = new Rectangle(580,40,350,50);
-        rectangleOflife.setColor(Color.GREEN);
-        rectangleOflife.fill();
+        enemyLife = new HealthBar(580,50,200);
+        enemyLife.showLifeBar();
     }
-    public Rectangle getRectangleOflife(){
-        return rectangleOflife;
-    }
-    public Picture getFighterSprite(){return fighterSprite;};
 }

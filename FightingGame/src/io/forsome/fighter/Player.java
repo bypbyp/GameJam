@@ -12,64 +12,44 @@ import org.academiadecodigo.simplegraphics.pictures.Picture;
 public class Player extends Fighter implements KeyboardHandler{
 
     private Keyboard keyboard;
-    private Position playerPosition;
+    //private Position playerPosition;
     private Picture fighterSprite;
-    private HealthBar healthBar;
+    private HealthBar playerLife;
 
+    private int playerPositionX;
+    private int playerPositionY;
+
+    private boolean jumping = false;
+    private boolean crouch = false;
+    private boolean attacking = false;
     private Background playerLimits;
-    private Rectangle rectangleOflife;
-    private Boolean jumping = false;
-    private Boolean attacking = false;
 
-    public Player( HealthBar healthBar, Position position) {
-        super(healthBar, position);
-        this.playerPosition = position;
-        this.fighterSprite = new Picture(200,400,"rsc/player.png");
-        this.healthBar = healthBar;
+    public Player(Picture fighter) {
+        super(fighter);
 
+        this.playerPositionX = fighterSprite.getX();
+        this.playerPositionY = fighterSprite.getY();
+        this.fighterSprite = fighter;
         this.keyboard = new Keyboard(this);
         this.playerLimits = new Background();
         addKeyboard();
     }
 
+    public HealthBar getPlayerLife() {
+        return playerLife;
+    }
+
+    public int getHealth(){
+        return playerLife.getHealth();
+    }
+
     public void createFighter(){
         fighterSprite.draw();
-       // fighterSprite.grow(130,130);
-        this.rectangleOflife = new Rectangle(120,40,350,50);
-        rectangleOflife.setColor(Color.GREEN);
-        rectangleOflife.fill();
+        playerLife = new HealthBar(120,40,200);
+        playerLife.createLifeBar();
     }
 
-    @Override
-    public int getX() {
-        return fighterSprite.getX();
-    }
 
-    @Override
-    public int getY() {
-        return fighterSprite.getY();
-    }
-
-    @Override
-    public int getMaxX() {
-        return fighterSprite.getMaxX();
-    }
-
-    @Override
-    public int getMaxY() {
-        return fighterSprite.getMaxY();
-    }
-
-    public Position getPosition(){
-        return this.playerPosition;
-    }
-
-    public Rectangle setRectangleOflife(int value) {
-        rectangleOflife.grow(-value,0);
-        rectangleOflife.fill();
-        return rectangleOflife;
-    }
-    public void setFighterSpriteWon(){ fighterSprite.load("rsc/player/playerWin.png");};
     public void addKeyboard(){
         KeyboardEvent moveRight = new KeyboardEvent();
         moveRight.setKey(KeyboardEvent.KEY_D);
@@ -123,34 +103,60 @@ public class Player extends Fighter implements KeyboardHandler{
     public void jump(){
         fighterSprite.translate(0,-30);
     }
-    public void goDownFromJump(){
-        fighterSprite.translate(0,-30);
-    }
 
     public void crouch(){
         fighterSprite.translate(0,30);
-    }// crounch dont move and like divide pos?
+    }
 
     public void lightPunch(){
-        System.out.println( getClass().getSimpleName() + " lightPunch");
+        System.out.println("lightPunch");
     }
 
     public void heavyPunch(){
-        System.out.println(getClass().getSimpleName() + " heavyPunch");
+        System.out.println("heavyPunch");
     }
 
     public void lightKick(){
-        System.out.println(getClass().getSimpleName() + " lightKick");
+        System.out.println("lightKick");
     }
 
     public void heavyKick(){
-        System.out.println(getClass().getSimpleName() + " heavyKick");
+        System.out.println("heavyKick");
     }
 
+    @Override
+    public int getX() {
+        return fighterSprite.getX();
+    }
+
+    @Override
+    public int getY() {
+        return fighterSprite.getY();
+    }
+
+    @Override
+    public int getMaxX() {
+        return fighterSprite.getMaxX();
+    }
+
+    @Override
+    public int getMaxY() {
+        return fighterSprite.getMaxY();
+    }
+
+    public void playerWon(){
+        fighterSprite.load("rsc/player/playerWin.png");
+    }
+
+    public void playerLost(){
+        fighterSprite.load("rsc/player/playerLost.png");
+    }
 
     public void resetPosition() {
-        playerPosition = new Position(200,200);
+        fighterSprite.delete();
+        createFighter();
     }
+
     public void resetIdlePosition(){
             this.jumping = !jumping;
             this.attacking = !attacking;
@@ -189,7 +195,7 @@ public class Player extends Fighter implements KeyboardHandler{
             case KeyboardEvent.KEY_J:
                 if(!attacking){
                     heavyPunch();
-                   // attacking = !attacking;
+                    // attacking = !attacking;
                 }
                 break;
             case KeyboardEvent.KEY_K:
