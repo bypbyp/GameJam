@@ -1,20 +1,13 @@
 package io.forsome.fighter;
 
 import io.forsome.game.Background;
-import io.forsome.gameartifacts.HealthBar;
-import io.forsome.gameartifacts.Position;
-import org.academiadecodigo.simplegraphics.graphics.Canvas;
-import org.academiadecodigo.simplegraphics.graphics.Color;
-import org.academiadecodigo.simplegraphics.graphics.Rectangle;
 import org.academiadecodigo.simplegraphics.keyboard.*;
 import org.academiadecodigo.simplegraphics.pictures.Picture;
 
 public class Player extends Fighter implements KeyboardHandler{
 
     private Keyboard keyboard;
-    //private Position playerPosition;
     private Picture fighterSprite;
-    private HealthBar playerLife;
 
     private int playerPositionX;
     private int playerPositionY;
@@ -24,31 +17,26 @@ public class Player extends Fighter implements KeyboardHandler{
     private boolean attacking = false;
     private Background playerLimits;
 
-    public Player(Picture fighter) {
-        super(fighter);
-
-        this.playerPositionX = fighterSprite.getX();
-        this.playerPositionY = fighterSprite.getY();
-        this.fighterSprite = fighter;
+    public Player(Picture sprite) {
+        super(sprite);
+        //this.playerPositionX = sprite.getX();
+        //this.playerPositionY = sprite.getY();
+        this.fighterSprite = sprite;
         this.keyboard = new Keyboard(this);
         this.playerLimits = new Background();
         addKeyboard();
     }
 
-    public HealthBar getPlayerLife() {
-        return playerLife;
-    }
-
-    public int getHealth(){
-        return playerLife.getHealth();
-    }
-
+    @Override
     public void createFighter(){
         fighterSprite.draw();
-        playerLife = new HealthBar(120,40,200);
-        playerLife.createLifeBar();
     }
 
+    @Override
+    public void resetPosition() {
+        fighterSprite.delete();
+        createFighter();
+    }
 
     public void addKeyboard(){
         KeyboardEvent moveRight = new KeyboardEvent();
@@ -152,10 +140,6 @@ public class Player extends Fighter implements KeyboardHandler{
         fighterSprite.load("rsc/player/playerLost.png");
     }
 
-    public void resetPosition() {
-        fighterSprite.delete();
-        createFighter();
-    }
 
     public void resetIdlePosition(){
             this.jumping = !jumping;

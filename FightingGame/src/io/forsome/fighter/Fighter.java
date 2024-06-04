@@ -1,15 +1,13 @@
 package io.forsome.fighter;
 
-import io.forsome.gameartifacts.Position;
-import org.academiadecodigo.simplegraphics.graphics.Rectangle;
 import org.academiadecodigo.simplegraphics.pictures.Picture;
 
 public abstract class Fighter {
 
-    private Picture fighter;
+    private Picture sprite;
 
-    public Fighter(Picture fighter) {
-        this.fighter = fighter;
+    public Fighter(Picture sprite) {
+        this.sprite = sprite;
     }
 
     // Basic Movements

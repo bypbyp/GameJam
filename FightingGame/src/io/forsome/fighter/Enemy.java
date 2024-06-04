@@ -1,33 +1,33 @@
 package io.forsome.fighter;
 
-import io.forsome.gameartifacts.HealthBar;
-import io.forsome.gameartifacts.Position;
-import org.academiadecodigo.simplegraphics.graphics.Color;
-import org.academiadecodigo.simplegraphics.graphics.Rectangle;
+import io.forsome.game.Background;
 import org.academiadecodigo.simplegraphics.pictures.*;
 
 public class Enemy extends Fighter{
 
-    private Position enemyPosition;
     private Picture fighterSprite;
-    private HealthBar enemyLife;
+    private Background playerLimit;
 
-    public Enemy(Picture fighter) {
-        super(fighter);
+    private int playerPositionX;
+    private int playerPositionY;
 
-        this.fighterSprite = new Picture(enemyPosition.getX(), enemyPosition.getY(), "rsc/player.png");
+    public Enemy(Picture sprite) {
+        super(sprite);
+        //this.playerPositionX = fighter.getX();
+        //this.playerPositionY = fighter.getY();
+        this.fighterSprite = sprite;
+        this.playerLimit = new Background();
     }
 
-    public HealthBar getEnemyLife() {
-        return enemyLife;
+    @Override
+    public void createFighter(){
+        fighterSprite.draw();
     }
 
-    public int getHealth(){
-        return enemyLife.getHealth();
-    }
-
-    public Position getPosition(){
-        return this.enemyPosition;
+    @Override
+    public void resetPosition() {
+        fighterSprite.delete();
+        createFighter();
     }
 
     public void moveRight(){
@@ -104,15 +104,4 @@ public class Enemy extends Fighter{
         return fighterSprite.getMaxY();
     }
 
-
-    public void resetPosition() {
-        fighterSprite.translate(50, 200);
-    }
-
-    @Override
-    public void createFighter() {
-        fighterSprite.draw();
-        enemyLife = new HealthBar(580,50,200);
-        enemyLife.showLifeBar();
-    }
 }

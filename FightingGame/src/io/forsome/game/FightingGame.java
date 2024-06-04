@@ -14,75 +14,65 @@ import org.academiadecodigo.simplegraphics.pictures.*;
 
 public class FightingGame implements KeyboardHandler {
 
+    // Game Attributes (ScreenSize: 1030, 603)
     public static boolean GAMEOVER = false;
-    //private static Collision collision;
-    //private static Music gameMusic;
-    private Player player;
-    private int playerHealth;
-
-    private Enemy enemy;
-    private int enemyHealth;
-
-    private Keyboard keyboard;
-
-    private int round;
-    private int timer;
-
+    private int round = 3;
+    private int timer = 60;
     private int playerWins;
     private int enemyWins;
+    private Background background = new Background();
+    private Background level = new Background();
+    //private static Collision collision;
+    //private static Music gameMusic;
+    private HUD gameHUD = new HUD();
 
-    private Background background;
+    // Fighters Attributes
+    private Player player = new Player(new Picture(200, 200, "rsc/player.png"));
+    private int playerHealth = 200;
+    private Enemy enemy = new Enemy(new Picture(700, 200, "rsc/enemy.png"));
+    private int enemyHealth = 200;
 
+    // Menu Keyboard;
+    private boolean gameStarted = false;
+    private Keyboard keyboard;
+
+    // -------------------------------------------------------------
+    // Constructor
     public FightingGame() {
-        //Rectangle gameScene = new Rectangle(10, 10, 1030, 603);
-        timer = 60;
-        round = 3;
         this.keyboard = new Keyboard(this);
         addKeyboard();
-        //gameScene.draw();
-
-        player = new Player(new Picture(200, 200, ""));
-        enemy = new Enemy(new Picture(700, 200, ""));
-
-        playerHealth = player.getHealth();
-        enemyHealth = enemy.getHealth();
-        background = new Background();
-
     }
 
-    public void addKeyboard() {
-        KeyboardEvent starGame = new KeyboardEvent();
-        starGame.setKey(KeyboardEvent.KEY_SPACE);
-        starGame.setKeyboardEventType(KeyboardEventType.KEY_PRESSED);
-        keyboard.addEventListener(starGame);
-    }
-
-    public void startGame() {
+    public void gameStart() {
         // Menu
-        background.show();
-        background.limitCanvas();
+        Background.limitCanvas();
+        background.showMenu();
     }
 
-    public void gameInit() {
+    public void newGame(){
         // Stage Creation
-        background.createBackground();
-        // Player Creation
-        player.createFighter();
+        level.createLevel();
 
-        // Enemy Creation
-        enemy.createFighter();
+
+
+        // Player and Enemy Creation
+        player.createFighter(); // olhar estes metodos
+        enemy.createFighter();// olhar estes metodos
+
+
         // Main game loop:
-        while (round >= 1) {
+        while (round > 0) {
             playRound();
-            System.out.println("KAWABANGA");
+            System.out.println("Game has started");
         }
-
-
     }
 
+
+    //Work HEre
 
     public void playRound() {
-        // Reset positions, health, and timer for each round
+        // Reset positions, health, and timer for each round\
+        gameHUD.drawHUD();
         player.resetPosition();
         enemy.resetPosition();
         timer = 60;
@@ -95,7 +85,7 @@ public class FightingGame implements KeyboardHandler {
             timer--;//this pause is giving error
             Canvas.pause();// Wait for 1 second
 
-            if (enemy.getHealth() <= 0) {
+            if (enemyHealth <= 0) {
                 playerWins++;
                 round--;
                 player.playerWon();
@@ -105,7 +95,7 @@ public class FightingGame implements KeyboardHandler {
                 // load a picture of 1 round won like a start under health bar
 
             }
-            if (player.getHealth() <= 0) {
+            if (playerHealth <= 0) {
                 enemyWins++;
                 round--;
                 enemy.enemyWon();
@@ -115,13 +105,12 @@ public class FightingGame implements KeyboardHandler {
                 // load a picture of 1 round won like a start under health bar
             }
             if (timer == 0) {
-                if(player.getHealth() > enemy.getHealth()){
+                if (playerHealth > enemyHealth) {
                     playerWins += 1;
                 }
                 enemyWins += 1;
                 return;
             }
-
         }
     }
 
@@ -137,21 +126,29 @@ public class FightingGame implements KeyboardHandler {
         // Collision detection logic
         if ((player.getMaxX()) != enemy.getX()) {
             System.out.println("alabama");
-            player.getPlayerLife().damage(10);
-            enemy.getEnemyLife().damage(10);
+            playerHealth -= 10;
+            enemyHealth -= 10;
         }
+    }
+
+    public void addKeyboard() {
+        KeyboardEvent starGame = new KeyboardEvent();
+        starGame.setKey(KeyboardEvent.KEY_SPACE);
+        starGame.setKeyboardEventType(KeyboardEventType.KEY_PRESSED);
+        keyboard.addEventListener(starGame);
     }
 
     @Override
     public void keyPressed(KeyboardEvent keyboardEvent) {
         if (keyboardEvent.getKey() == KeyboardEvent.KEY_SPACE) {
-            gameInit();
+            if(!gameStarted){
+                newGame();
+                gameStarted = true;
+            }
         }
     }
 
     @Override
-    public void keyReleased(KeyboardEvent keyboardEvent) {
-
-    }
+    public void keyReleased(KeyboardEvent keyboardEvent) {}
 }
 

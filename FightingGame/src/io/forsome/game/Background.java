@@ -6,31 +6,31 @@ import static org.academiadecodigo.simplegraphics.graphics.Canvas.*;
 
 
 public class Background {
+
     Picture backgroundRelva = new Picture(10, 10, "rsc/BackGroundRelva.JPG");
     Picture backgroundSala = new Picture(10, 10, "rsc/BackGroundSala.JPG");
+    Picture menu = new Picture(10,10,"rsc/menu.png");
+    private int randomLevel;
 
-    Picture menu = new Picture(10, 10, "rsc/meno-comIntrucao.png");
-
-    private int randomBackground;
-    public void createBackground() {
-        randomBackground = (int) Math.floor(Math.random() * 2);
-        switch (randomBackground) {
+    public void createLevel() {
+        randomLevel = (int) Math.floor(Math.random() * 2);
+        switch (randomLevel) {
             case 0:
                 backgroundRelva.draw();
-                hide();
-
+                hideMenu();
                 break;
             case 1:
                 backgroundSala.draw();
-                hide();
+                hideMenu();
                 break;
         }
     }
 
-    public void show(){
+    public void showMenu(){
         menu.draw();
     }
-    public void hide(){
+
+    public void hideMenu(){
         menu.delete();
     }
 
@@ -38,19 +38,23 @@ public class Background {
         limitCanvasWidth(1030);
         limitCanvasHeight(603);
     }
+
     public static void pause(){
         Canvas.pause();
     }
+
     public int getX(){
         return menu.getX();
-
     }
+
     public int getY(){
         return menu.getY();
     }
+
     public int getMaxX(){
         return menu.getMaxX();
     }
+
     public int getMaxY(){
         return menu.getMaxY();
     }

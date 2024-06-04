@@ -9,8 +9,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-        FightingGame fg = new FightingGame();
-        fg.startGame();
-
+        FightingGame fightgame = new FightingGame();
+        fightgame.gameStart();
     }
 }
