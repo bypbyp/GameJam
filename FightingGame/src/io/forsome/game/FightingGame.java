@@ -1,11 +1,8 @@
 package io.forsome.game;
 
 import io.forsome.fighter.Enemy;
-import io.forsome.fighter.Fighter;
 import io.forsome.fighter.Player;
 import io.forsome.gameartifacts.*;
-import org.academiadecodigo.simplegraphics.graphics.Canvas;
-import org.academiadecodigo.simplegraphics.graphics.Rectangle;
 import org.academiadecodigo.simplegraphics.keyboard.Keyboard;
 import org.academiadecodigo.simplegraphics.keyboard.KeyboardEvent;
 import org.academiadecodigo.simplegraphics.keyboard.KeyboardEventType;
@@ -17,22 +14,24 @@ public class FightingGame implements KeyboardHandler {
     // Game Attributes (ScreenSize: 1030, 603)
     public static boolean GAMEOVER = false;
     private int round = 3;
-    private int timer = 60;
-    private int playerWins;
-    private int enemyWins;
+    private int playerWins = 0;
+    private int enemyWins = 0;
+
     private Background background = new Background();
-    private Background level = new Background();
-    //private static Collision collision;
-    //private static Music gameMusic;
+    private Picture level;
     private HUD gameHUD = new HUD();
 
     // Fighters Attributes
-    private Player player = new Player(new Picture(200, 200, "FightingGame/rsc/player.png"));
+    private Player player = new Player(new Picture(200, 350, "rsc/player.png"));
     private int playerHealth = 200;
-    private Enemy enemy = new Enemy(new Picture(700, 200, "FightingGame/rsc/enemy.png"));
+    private Enemy enemy = new Enemy(new Picture(700, 350, "rsc/player.png"));
     private int enemyHealth = 200;
 
-    // Menu Keyboard;
+    // Timer
+    private int roundTime = 60;
+    private boolean timerRunning = false;
+
+    // Menu Keyboard
     private boolean gameStarted = false;
     private Keyboard keyboard;
 
@@ -43,116 +42,113 @@ public class FightingGame implements KeyboardHandler {
         addKeyboard();
     }
 
+    public int getRoundTime() {
+        return roundTime;
+    }
+
     public void gameStart() {
-        // Menu
-        //Background.limitCanvas();
+        // Show the menu and wait for the space key to be pressed
         background.showMenu();
     }
 
-    public void newGame(){
-        //hide menu
+    public void newGame() {
         background.hideMenu();
-        // Stage Creation
-        level.createLevel();
-
+        level = new Picture(10, 10, "rsc/BackGroundRelva.JPG");
+        level.draw();
+        gameHUD.drawHUD();
 
         // Player and Enemy Creation
-        player.createFighter(); // olhar estes metodos
-        enemy.createFighter();// olhar estes metodos
-
+        player.createFighter();
+        enemy.createFighter();
 
         // Main game loop:
         while (round > 0) {
             playRound();
-            System.out.println("Game has started");
         }
         gameStarted = false;
     }
 
-
-    //Work HEre
-
     public void playRound() {
-        // Reset positions, health, and timer for each round\
-        System.out.println("OOOOOIIIIIIIII");
-        gameHUD.drawHUD();
         player.resetPosition();
         enemy.resetPosition();
-        timer = 60;
+        playerHealth = 200;
+        enemyHealth = 200;
+        roundTime = 60;
+        timerRunning = true;
 
-        // Round logic here
-        while (timer > 0) {
-            updateGame();
+        // Start the timer in a separate thread
+        new Thread(this::startTimer).start();
 
-            System.out.println("timer: " + timer);
-           // timer--;//this pause is giving error
-            
-            if (enemyHealth <= 0) {
-                playerWins++;
-                round--;
-                player.playerWon();
-                enemy.enemyLost();
-                Picture counter = new Picture(240, 100, "FightingGame/rsc/player/roundcounter.png");
-                counter.draw();
-                return;
-                // load a picture of 1 round won like a start under health bar
+        while (playerHealth > 0 && enemyHealth > 0 && roundTime > 0) {
+            enemy.randomMove();
+            checkCollisions();
+            // Add a delay to control the game loop speed
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        timerRunning = false; // Stop the timer when the round ends
 
+        if (playerHealth > enemyHealth) {
+            playerWins++;
+            player.playerWon();
+            enemy.enemyLost();
+            Picture counter = new Picture(240, 100, "rsc/player/roundcounter.png");
+            counter.draw();
+        } else if (enemyHealth > playerHealth) {
+            enemyWins++;
+            enemy.enemyWon();
+            player.playerLost();
+            Picture counter = new Picture(440, 100, "rsc/player/roundcounter.png");
+            counter.draw();
+        }
+        round--;
+    }
+
+    private void startTimer() {
+        while (roundTime > 0 && timerRunning) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-            if (playerHealth <= 0) {
-                enemyWins++;
-                round--;
-                enemy.enemyWon();
-                player.playerLost();
-                Picture counter = new Picture(440, 100, "FightingGame/rsc/player/roundcounter.png");
-                counter.draw();
-                return;
-                // load a picture of 1 round won like a start under health bar
-            }
-            if (timer == 0) {
-                if (playerHealth > enemyHealth) {
-                    playerWins += 1;
-                }
-                enemyWins += 1;
-                return;
-            }
+            roundTime--;
         }
     }
 
-    private void updateGame() {
-        // Update game state, check for collisions, update health, etc.
-        enemy.randomMove();
-        player.resetIdlePosition();
-        checkCollisions();
-
-    }
-
     private void checkCollisions() {
-        // Collision detection logic
-        if ((player.getMaxX()) != enemy.getX()) {
-            System.out.println("alabama");
+        if (player.getMaxX() >= enemy.getX() && player.getX() <= enemy.getMaxX() &&
+                player.getMaxY() >= enemy.getY() && player.getY() <= enemy.getMaxY()) {
             playerHealth -= 10;
             enemyHealth -= 10;
         }
     }
 
     public void addKeyboard() {
-        KeyboardEvent starGame = new KeyboardEvent();
-        starGame.setKey(KeyboardEvent.KEY_SPACE);
-        starGame.setKeyboardEventType(KeyboardEventType.KEY_PRESSED);
-        keyboard.addEventListener(starGame);
+        KeyboardEvent startGame = new KeyboardEvent();
+        startGame.setKey(KeyboardEvent.KEY_SPACE);
+        startGame.setKeyboardEventType(KeyboardEventType.KEY_PRESSED);
+        keyboard.addEventListener(startGame);
     }
 
     @Override
     public void keyPressed(KeyboardEvent keyboardEvent) {
         if (keyboardEvent.getKey() == KeyboardEvent.KEY_SPACE) {
-            if(!gameStarted){
-                newGame();
+            if (!gameStarted) {
                 gameStarted = true;
+                new Thread(this::newGame).start(); // Start the game loop in a new thread
             }
         }
     }
 
     @Override
-    public void keyReleased(KeyboardEvent keyboardEvent) {}
-}
+    public void keyReleased(KeyboardEvent keyboardEvent) {
+    }
 
+    public static void main(String[] args) {
+        FightingGame game = new FightingGame();
+        game.gameStart();
+    }
+}

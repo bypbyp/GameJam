@@ -1,5 +1,6 @@
 package io.forsome.gameartifacts;
 
+import io.forsome.game.FightingGame;
 import org.academiadecodigo.simplegraphics.graphics.Color;
 import org.academiadecodigo.simplegraphics.graphics.Rectangle;
 import org.academiadecodigo.simplegraphics.pictures.Picture;
@@ -15,12 +16,11 @@ public class HUD {
     private Text enemyName;
 
     public HUD() {
-        this.playerHealthBar = new Rectangle(100, 10, 200, 20);
-        this.enemyHealthBar = new Rectangle(400, 10, 200, 20);
+        this.playerHealthBar = new Rectangle(130, 30, 200, 30);
+        this.enemyHealthBar = new Rectangle(800, 30, 200, 30);
         this.timer = new Text(510, 30, "60"); // X Y String
-        this.playerName = new Text(100, 60, "Player"); // X Y String
-        this.enemyName = new Text(600, 60, "Enemy"); // X Y String
-        drawHUD();
+        this.playerName = new Text(100, 80, "Player"); // X Y String
+        this.enemyName = new Text(850, 80, "Enemy"); // X Y String
     }
 
     public void drawHUD() {
@@ -35,6 +35,32 @@ public class HUD {
         timer.draw();
         playerName.draw();
         enemyName.draw();
+    }
+
+    public static class CountDownTimer implements Runnable{
+
+        private int seconds;
+        private int timer;
+
+        public CountDownTimer(){
+            this.seconds = 10;
+        }
+
+        public int getTimer() {
+            return timer;
+        }
+
+        @Override
+        public void run() {
+            for(int i = seconds; i >= 0; i--){
+                try {
+                    Thread.sleep(1000);
+                    timer = i;
+                } catch (InterruptedException e) {
+                    System.out.println(e);
+                }
+            }
+        }
     }
 
     /*

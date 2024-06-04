@@ -7,21 +7,21 @@ import static org.academiadecodigo.simplegraphics.graphics.Canvas.*;
 
 public class Background {
 
-    Picture backgroundRelva = new Picture();
-    Picture backgroundSala = new Picture();
-    Picture menu = new Picture(10,10,"FightingGame/rsc/meno-comIntrucao.png");
+    Picture backgroundRelva;
+    Picture backgroundSala;
+    Picture menu;
     private int randomLevel;
 
     public Background(){
-        this.backgroundRelva = new Picture(10, 10, "FightingGame/rsc/BackGroundRelva.JPG");
-        this.backgroundSala = new Picture(10, 10, "FightingGame/rsc/BackGroundSala.JPG");
+        this.backgroundRelva = new Picture(10, 10, "rsc/BackGroundRelva.JPG");
+        this.backgroundSala = new Picture(10, 10, "rsc/BackGroundSala.JPG");
+        this.menu = new Picture(10,10,"rsc/meno-comIntrucao.png");
     }
 
     public void createLevel() {
         randomLevel = (int) Math.floor(Math.random() * 2);
         switch (randomLevel) {
             case 0:
-
                 backgroundRelva.draw();
                 break;
             case 1:
