@@ -27,9 +27,9 @@ public class FightingGame implements KeyboardHandler {
     private HUD gameHUD = new HUD();
 
     // Fighters Attributes
-    private Player player = new Player(new Picture(200, 200, "rsc/player.png"));
+    private Player player = new Player(new Picture(200, 200, "FightingGame/rsc/player.png"));
     private int playerHealth = 200;
-    private Enemy enemy = new Enemy(new Picture(700, 200, "rsc/enemy.png"));
+    private Enemy enemy = new Enemy(new Picture(700, 200, "FightingGame/rsc/enemy.png"));
     private int enemyHealth = 200;
 
     // Menu Keyboard;
@@ -45,14 +45,15 @@ public class FightingGame implements KeyboardHandler {
 
     public void gameStart() {
         // Menu
-        Background.limitCanvas();
+        //Background.limitCanvas();
         background.showMenu();
     }
 
     public void newGame(){
+        //hide menu
+        background.hideMenu();
         // Stage Creation
         level.createLevel();
-
 
 
         // Player and Enemy Creation
@@ -65,6 +66,7 @@ public class FightingGame implements KeyboardHandler {
             playRound();
             System.out.println("Game has started");
         }
+        gameStarted = false;
     }
 
 
@@ -72,6 +74,7 @@ public class FightingGame implements KeyboardHandler {
 
     public void playRound() {
         // Reset positions, health, and timer for each round\
+        System.out.println("OOOOOIIIIIIIII");
         gameHUD.drawHUD();
         player.resetPosition();
         enemy.resetPosition();
@@ -82,14 +85,14 @@ public class FightingGame implements KeyboardHandler {
             updateGame();
 
             System.out.println("timer: " + timer);
-            timer--;//this pause is giving error
-            Canvas.pause();// Wait for 1 second
-
+           // timer--;//this pause is giving error
+            
             if (enemyHealth <= 0) {
                 playerWins++;
                 round--;
                 player.playerWon();
-                Picture counter = new Picture(240, 100, "rsc/player/roundcounter.png");
+                enemy.enemyLost();
+                Picture counter = new Picture(240, 100, "FightingGame/rsc/player/roundcounter.png");
                 counter.draw();
                 return;
                 // load a picture of 1 round won like a start under health bar
@@ -99,7 +102,8 @@ public class FightingGame implements KeyboardHandler {
                 enemyWins++;
                 round--;
                 enemy.enemyWon();
-                Picture counter = new Picture(440, 100, "rsc/player/roundcounter.png");
+                player.playerLost();
+                Picture counter = new Picture(440, 100, "FightingGame/rsc/player/roundcounter.png");
                 counter.draw();
                 return;
                 // load a picture of 1 round won like a start under health bar

@@ -16,7 +16,7 @@ public class Enemy extends Fighter{
         //this.playerPositionX = fighter.getX();
         //this.playerPositionY = fighter.getY();
         this.fighterSprite = sprite;
-        this.playerLimit = new Background();
+        //this.playerLimit = new Background();
     }
 
     @Override
@@ -26,7 +26,7 @@ public class Enemy extends Fighter{
 
     @Override
     public void resetPosition() {
-        fighterSprite.delete();
+        //fighterSprite.delete();
         createFighter();
     }
 
@@ -77,11 +77,11 @@ public class Enemy extends Fighter{
     }
 
     public void enemyWon(){
-        fighterSprite.load("rsc/player/playerWin.png");
+        fighterSprite.load("FightingGame/rsc/player/playerWin.png");
     }
 
     public void enemyLost(){
-        fighterSprite.load("rsc/player/playerLost.png");
+        fighterSprite.load("FightingGame/rsc/player/playerLose.png");
     }
 
     @Override
