@@ -28,11 +28,11 @@ public class HUD {
         this.playerHealthBar = new Rectangle(90, 30, playerLifeBarLifeSize, 50);
         this.enemyHealthBar = new Rectangle(enemyLifeBarX, 30, enemyLifeBarLifeSize, 50);
         this.timer = new Text(515, 60, String.valueOf(roundTimer)); // X Y String
-
-        this.playerName = new Picture(100, 90, "rsc/Names/MEKIE_NAME.png"); // X Y String
-        this.enemyName = new Picture(780, 90, "rsc/Names/NOZK-NAME.png");// X Y String
-        this.selectedPlayer = new Picture(20,20,"rsc/Mekie/11 - PIC/square.png");
-        this.selectedEnemy = new Picture(900,20,"rsc/Mekie/11 - PIC/square.png");
+        timer.grow(70,70);
+        this.playerName = new Picture(150, 100, "rsc/Names/MEKIE_NAME.png"); // X Y String
+        this.enemyName = new Picture(710, 100, "rsc/Names/NOZK-NAME.png");// X Y String
+        this.selectedPlayer = new Picture(40,100,"rsc/Mekie/11 - PIC/square.png");
+        this.selectedEnemy = new Picture(900,100,"rsc/Mekie/11 - PIC/square.png");
     }
 
     public void drawHUD() {
@@ -53,7 +53,6 @@ public class HUD {
         // Timer
         timer.setColor(Color.RED);
         timer.draw();
-        timer.grow(70,70);
         // Names
         playerName.draw();
         selectedPlayer.draw();

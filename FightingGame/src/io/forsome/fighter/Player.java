@@ -26,7 +26,7 @@ public class Player extends Fighter implements KeyboardHandler {
 
     @Override
     public void createFighter() {
-        fighterSprite = new Picture(200, 300, "rsc/Mekie/0 - Idle/0.png");
+        fighterSprite = new Picture(200, 300, "rsc/Mekie - Left/0 - Idle/0.png");
         fighterSprite.draw();
 
     }
@@ -90,7 +90,7 @@ public class Player extends Fighter implements KeyboardHandler {
     }
 
     public void lightPunch() {
-        fighterSprite.load("rsc/Mekie/1 - High Punch/3.png");
+        fighterSprite.load("rsc/Mekie - Left/1 - High Punch/3.png");
         try {
             Thread.sleep(100);
         } catch (InterruptedException e) {
@@ -172,7 +172,7 @@ public class Player extends Fighter implements KeyboardHandler {
                 break;
             case KeyboardEvent.KEY_H:
                 if (!attacking) {
-                    fighterSprite.load("rsc/Mekie/1 - High Punch/2.png");
+                    fighterSprite.load("rsc/Mekie - Left/1 - High Punch/3.png");
                     //punchHigh();
                     lightPunch();
                     attacking = true;
@@ -218,7 +218,7 @@ public class Player extends Fighter implements KeyboardHandler {
 
                 try {
                     Thread.sleep(200);
-                    fighterSprite.load("rsc/Mekie/0 - Idle/0.png"); // Delay for 2000 milliseconds (2 seconds)
+                    fighterSprite.load("rsc/Mekie - Left/0 - Idle/0.png"); // Delay for 2000 milliseconds (2 seconds)
                     attacking = false;
                     break;
                 } catch (InterruptedException e) {

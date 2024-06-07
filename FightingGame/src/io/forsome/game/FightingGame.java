@@ -19,7 +19,7 @@ public class FightingGame implements KeyboardHandler {
     private Background background = new Background();
     private HUD gameHUD = new HUD();
     // Fighters Attributes
-    private Player player = new Player(new Picture(200, 300, "rsc/Mekie/0 - Idle/0.png"));
+    private Player player = new Player(new Picture(200, 300, "rsc/Mekie - Left/0 - Idle/0.png"));
     private int playerHealth = 200;
     private Enemy enemy = new Enemy(new Picture(700, 300, "rsc/Mekie/0 - Idle/0.png"));
     private int enemyHealth = 200;
@@ -49,6 +49,11 @@ public class FightingGame implements KeyboardHandler {
         background.hideWin();
     }
 
+    public void playerSelection() {
+        PlayerSelect playerSelect = new PlayerSelect();
+        playerSelect.selection();
+    }
+
     public void newGame() {
         background.hideMenu();
         background.createLevel();
@@ -71,7 +76,7 @@ public class FightingGame implements KeyboardHandler {
             background.showWin();
             return;
         }
-        if(enemyWins == 2){
+        if (enemyWins == 2) {
             background.showLoose();
             return;
         }
@@ -96,7 +101,7 @@ public class FightingGame implements KeyboardHandler {
                 e.printStackTrace();
             }
         }
-        if(enemyHealth <=0){
+        if (enemyHealth <= 0) {
             try {
                 player.playerWon();
                 enemy.enemyLost();
@@ -106,7 +111,7 @@ public class FightingGame implements KeyboardHandler {
                 throw new RuntimeException(e);
             }
         }
-        if(playerHealth <=0){
+        if (playerHealth <= 0) {
             try {
                 player.playerLost();
                 enemy.enemyWon();
@@ -197,7 +202,10 @@ public class FightingGame implements KeyboardHandler {
         if (keyboardEvent.getKey() == KeyboardEvent.KEY_SPACE) {
             if (!gameStarted) {
                 gameStarted = true;
-                new Thread(this::newGame).start(); // Start the game loop in a new thread
+                new Thread(() -> {
+                    playerSelection(); // Perform player selection
+                    newGame();         // Start the game after selection
+                }).start(); // Start the game loop in a new thread
             }
         }
     }
@@ -207,7 +215,8 @@ public class FightingGame implements KeyboardHandler {
     }
 
     public static void main(String[] args) {
-        FightingGame game = new FightingGame();
-        game.gameStart();
+        FightingGame fg = new FightingGame();
+        fg.gameStart();
     }
+
 }
