@@ -11,11 +11,13 @@ public class Background {
     Picture backgroundSala;
     Picture menu;
     private int randomLevel;
+    Picture win;
 
     public Background(){
-        this.backgroundRelva = new Picture(10, 10, "rsc/BackGroundRelva.JPG");
-        this.backgroundSala = new Picture(10, 10, "rsc/BackGroundSala.JPG");
+        this.backgroundRelva = new Picture(10, 10, "rsc/BackGroundSalinha.JPG");
+        this.backgroundSala = new Picture(10, 10, "rsc/BackGroundRelva.JPG");
         this.menu = new Picture(10,10,"rsc/meno-comIntrucao.png");
+        this.win = new Picture(10,10,"rsc/YouWin.jpeg");
     }
 
     public void createLevel() {
@@ -38,13 +40,13 @@ public class Background {
         menu.delete();
     }
 
-   /* public static void limitCanvas() {
-        limitCanvasWidth(1030);
-        limitCanvasHeight(603);
+    public void showWin(){
+        win.draw();
     }
 
-    */
-
+    public void hideWin(){
+        win.delete();
+    }
     public static void pause(){
         Canvas.pause();
     }

@@ -1,36 +1,44 @@
 package io.forsome.fighter;
 
 import io.forsome.game.Background;
+import io.forsome.gameartifacts.HUD;
 import org.academiadecodigo.simplegraphics.keyboard.*;
 import org.academiadecodigo.simplegraphics.pictures.Picture;
+import io.forsome.fighter.Enemy;
+
 
 public class Player extends Fighter implements KeyboardHandler {
 
     private Keyboard keyboard;
     private Picture fighterSprite;
 
+
+    //private Enemy enemy;
+
     private boolean jumping = false;
     private boolean crouching = false;
     private boolean attacking = false;
-    private Background playerLimits;
 
     public Player(Picture sprite) {
         super(sprite);
         this.fighterSprite = sprite;
         this.keyboard = new Keyboard(this);
         addKeyboard();
+        //this.enemy = new Enemy(fighterSprite);
     }
 
     @Override
     public void createFighter() {
+        fighterSprite = new Picture(200, 300, "rsc/Mekie/0 - Idle/0.png");
         fighterSprite.draw();
+
     }
 
     @Override
     public void resetPosition() {
-        fighterSprite.translate(playerLimits.getX() - fighterSprite.getX(),
-                playerLimits.getY() - fighterSprite.getY());
-        createFighter();
+        //fighterSprite.translate(playerLimits.getX() - fighterSprite.getX(),playerLimits.getY() - fighterSprite.getY());
+        fighterSprite.delete();
+        //createFighter();
     }
 
     public void addKeyboard() {
@@ -67,15 +75,17 @@ public class Player extends Fighter implements KeyboardHandler {
     }
 
     public void jump() {
-        fighterSprite.translate(0, -30);
+        fighterSprite.translate(0, -10);
+        fighterSprite.translate(0, -10);
+        fighterSprite.translate(0, -10);
     }
 
     public void crouch() {
-        fighterSprite.translate(0, 30);
+        fighterSprite.translate(0, 0);
     }
 
     public void standUp() {
-        fighterSprite.translate(0, -30);
+        fighterSprite.translate(0, 0);
     }
 
     public void land() {
@@ -118,6 +128,10 @@ public class Player extends Fighter implements KeyboardHandler {
         return fighterSprite.getMaxY();
     }
 
+    public boolean isAttacking() {
+        return attacking;
+    }
+
     public void playerWon() {
         fighterSprite.load("rsc/player/playerWin.png");
     }
@@ -126,22 +140,19 @@ public class Player extends Fighter implements KeyboardHandler {
         fighterSprite.load("rsc/player/playerLose.png");
     }
 
-    public void resetIdlePosition() {
-        this.jumping = false;
-        this.attacking = false;
-        this.crouching = false;
-    }
-
     @Override
     public void keyPressed(KeyboardEvent keyboardEvent) {
         switch (keyboardEvent.getKey()) {
             case KeyboardEvent.KEY_D:
-                if (!jumping && !crouching && !attacking) {
+                if (!jumping && !crouching && getMaxX() <= 1020) {
+                    //if(getMaxX() <= enemy.getX() ){
                     moveRight();
+                    // }
+
                 }
                 break;
             case KeyboardEvent.KEY_A:
-                if (!jumping && !crouching && !attacking) {
+                if (!jumping && !crouching && getX() >= 40) {
                     moveLeft();
                 }
                 break;
@@ -159,6 +170,8 @@ public class Player extends Fighter implements KeyboardHandler {
                 break;
             case KeyboardEvent.KEY_H:
                 if (!attacking) {
+                    fighterSprite.load("rsc/Mekie/1 - High Punch/2.png");
+                    //punchHigh();
                     lightPunch();
                     attacking = true;
                 }
@@ -200,11 +213,67 @@ public class Player extends Fighter implements KeyboardHandler {
                 }
                 break;
             case KeyboardEvent.KEY_H:
+
+                try {
+                    Thread.sleep(200);
+                    fighterSprite.load("rsc/Mekie/0 - Idle/0.png"); // Delay for 2000 milliseconds (2 seconds)
+                    attacking = false;
+                    break;
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             case KeyboardEvent.KEY_J:
+                attacking = false;
+                break;
             case KeyboardEvent.KEY_K:
+                attacking = false;
+                break;
             case KeyboardEvent.KEY_L:
                 attacking = false;
                 break;
         }
     }
+/*
+    public void punchHigh() {
+        fighterSprite.load("rsc/Mekie/1 - High Punch/1.png");
+        try {
+            Thread.sleep(200); // Delay for 2000 milliseconds (2 seconds)
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        fighterSprite.load("rsc/Mekie/1 - High Punch/1.png");
+        try {
+            Thread.sleep(200); // Delay for 2000 milliseconds (2 seconds)
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        fighterSprite.load("rsc/Mekie/1 - High Punch/2.png");
+        try {
+            Thread.sleep(200); // Delay for 2000 milliseconds (2 seconds)
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        fighterSprite.load("rsc/Mekie/1 - High Punch/3.png");
+        try {
+            Thread.sleep(200); // Delay for 2000 milliseconds (2 seconds)
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        fighterSprite.load("rsc/Mekie/1 - High Punch/4.png");
+        try {
+            Thread.sleep(200); // Delay for 2000 milliseconds (2 seconds)
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        fighterSprite.load("rsc/Mekie/1 - High Punch/5.png");
+        try {
+            Thread.sleep(200); // Delay for 2000 milliseconds (2 seconds)
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }*/
 }

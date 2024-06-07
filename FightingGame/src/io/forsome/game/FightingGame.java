@@ -18,13 +18,13 @@ public class FightingGame implements KeyboardHandler {
     private int enemyWins = 0;
 
     private Background background = new Background();
-    private Picture level;
+    //private Picture level;
     private HUD gameHUD = new HUD();
 
     // Fighters Attributes
-    private Player player = new Player(new Picture(200, 350, "rsc/player.png"));
+    private Player player = new Player(new Picture(200, 300, "rsc/Mekie/0 - Idle/0.png"));
     private int playerHealth = 200;
-    private Enemy enemy = new Enemy(new Picture(700, 350, "rsc/player.png"));
+    private Enemy enemy = new Enemy(new Picture(700, 300, "rsc/Mekie/0 - Idle/0.png"));
     private int enemyHealth = 200;
 
     // Timer
@@ -49,12 +49,14 @@ public class FightingGame implements KeyboardHandler {
     public void gameStart() {
         // Show the menu and wait for the space key to be pressed
         background.showMenu();
+        background.hideWin();
     }
 
     public void newGame() {
         background.hideMenu();
-        level = new Picture(10, 10, "rsc/BackGroundRelva.JPG");
-        level.draw();
+        //level = new Picture(10, 10, "rsc/BackGroundSalinha.JPG");
+        //level.draw();
+        background.createLevel();
         gameHUD.drawHUD();
 
         // Player and Enemy Creation
@@ -63,14 +65,29 @@ public class FightingGame implements KeyboardHandler {
 
         // Main game loop:
         while (round > 0) {
+            //gameHUD.resetRoundTimer();
+            //gameHUD.delete();
             playRound();
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            //Trying to fiz when finish the first game, 3 rounds.
+            if(playerWins == 2 || enemyWins == 2){
+                background.showWin();
+                gameStarted = false;
+                playerWins = 0;
+                enemyWins = 0;
+                round = 0;
+                gameStart();
+            }
         }
-        gameStarted = false;
     }
 
     public void playRound() {
-        player.resetPosition();
-        enemy.resetPosition();
+        //player.createFighter();
+        //enemy.createFighter();
         playerHealth = 200;
         enemyHealth = 200;
         roundTime = 60;
@@ -81,10 +98,11 @@ public class FightingGame implements KeyboardHandler {
 
         while (playerHealth > 0 && enemyHealth > 0 && roundTime > 0) {
             enemy.randomMove();
-            checkCollisions();
+
             // Add a delay to control the game loop speed
             try {
-                Thread.sleep(100);
+                Thread.sleep(300);
+                checkCollisions();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -95,15 +113,36 @@ public class FightingGame implements KeyboardHandler {
             playerWins++;
             player.playerWon();
             enemy.enemyLost();
+            gameHUD.resetRoundTimer(); // trying to fix the time delay
             Picture counter = new Picture(240, 100, "rsc/player/roundcounter.png");
             counter.draw();
-        } else if (enemyHealth > playerHealth) {
+            try {
+                Thread.sleep(1000);
+                player.resetPosition();
+                player.createFighter();
+                enemy.resetPosition();
+                enemy.createFighter();
+                return;
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
             enemyWins++;
             enemy.enemyWon();
             player.playerLost();
-            Picture counter = new Picture(440, 100, "rsc/player/roundcounter.png");
+            gameHUD.resetRoundTimer(); //same as above
+
+        Picture counter = new Picture(440, 100, "rsc/player/roundcounter.png");
             counter.draw();
-        }
+            try {
+                Thread.sleep(1000);
+                player.resetPosition();
+                player.createFighter();
+                enemy.resetPosition();
+                enemy.createFighter();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         round--;
     }
 
@@ -115,14 +154,19 @@ public class FightingGame implements KeyboardHandler {
                 e.printStackTrace();
             }
             roundTime--;
+            gameHUD.updateTimer();
         }
     }
 
     private void checkCollisions() {
-        if (player.getMaxX() >= enemy.getX() && player.getX() <= enemy.getMaxX() &&
-                player.getMaxY() >= enemy.getY() && player.getY() <= enemy.getMaxY()) {
-            playerHealth -= 10;
-            enemyHealth -= 10;
+        if (player.getMaxX() >= enemy.getX()) {
+            if(player.isAttacking()){
+                enemyHealth -= 20;
+                System.out.println(enemyHealth);
+                gameHUD.damage();   //this is to decrease size of rectangle
+                return;
+            }
+            //playerHealth -= 10;
         }
     }
 

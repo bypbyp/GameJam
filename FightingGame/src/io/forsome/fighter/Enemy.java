@@ -11,39 +11,54 @@ public class Enemy extends Fighter{
     private int playerPositionX;
     private int playerPositionY;
 
+
     public Enemy(Picture sprite) {
         super(sprite);
-        //this.playerPositionX = fighter.getX();
-        //this.playerPositionY = fighter.getY();
         this.fighterSprite = sprite;
-        //this.playerLimit = new Background();
     }
 
     @Override
     public void createFighter(){
+        fighterSprite = new Picture(700,300,"rsc/Mekie/0 - Idle/0.png");
         fighterSprite.draw();
     }
 
     @Override
     public void resetPosition() {
-        //fighterSprite.delete();
-        createFighter();
+        fighterSprite.delete();
+        //createFighter();
     }
 
     public void moveRight(){
-        fighterSprite.translate(30,0);
+        if(getMaxX() <= 1020){
+            fighterSprite.translate(30,0);
+        }
     }
 
     public void moveLeft(){
-        fighterSprite.translate(-30,0);
+        if(getX() >= 40){
+            fighterSprite.translate(-30,0);
+        }
     }
 
-    public void jump(){
-        fighterSprite.translate(0,-30);
+    public void jump() {
+        fighterSprite.translate(0, -10);
+        fighterSprite.translate(0, -10);
+        fighterSprite.translate(0, -10);
+        land();
+        System.out.println("Enemy jumped");
+    }
+    public void standUp() {
+        fighterSprite.translate(0, 0);
+    }
+
+    public void land() {
+        fighterSprite.translate(0, 30);
     }
 
     public void crouch(){
-        fighterSprite.translate(0,30);
+        fighterSprite.translate(0,0);
+        standUp();
     }
 
     public void lightPunch(){
@@ -75,6 +90,12 @@ public class Enemy extends Fighter{
             case 8 -> heavyPunch();
         }
     }
+    // method that will check if he is attacking, have to implement.
+    /* public boolean isAttacking(){
+        return attacking;
+    }
+
+     */
 
     public void enemyWon(){
         fighterSprite.load("rsc/player/playerWin.png");
