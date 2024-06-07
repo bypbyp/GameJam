@@ -98,11 +98,11 @@ public class Enemy extends Fighter{
      */
 
     public void enemyWon(){
-        fighterSprite.load("rsc/player/playerWin.png");
+        fighterSprite.load("rsc/Mekie/9 - Win/0.png");
     }
 
     public void enemyLost(){
-        fighterSprite.load("rsc/player/playerLose.png");
+        fighterSprite.load("rsc/Mekie/10 - Lose/0.png");
     }
 
     @Override

@@ -12,9 +12,6 @@ public class Player extends Fighter implements KeyboardHandler {
     private Keyboard keyboard;
     private Picture fighterSprite;
 
-
-    //private Enemy enemy;
-
     private boolean jumping = false;
     private boolean crouching = false;
     private boolean attacking = false;
@@ -93,7 +90,12 @@ public class Player extends Fighter implements KeyboardHandler {
     }
 
     public void lightPunch() {
-        System.out.println("lightPunch");
+        fighterSprite.load("rsc/Mekie/1 - High Punch/3.png");
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void heavyPunch() {
@@ -133,11 +135,11 @@ public class Player extends Fighter implements KeyboardHandler {
     }
 
     public void playerWon() {
-        fighterSprite.load("rsc/player/playerWin.png");
+        fighterSprite.load("rsc/Mekie/9 - Win/0.png");
     }
 
     public void playerLost() {
-        fighterSprite.load("rsc/player/playerLose.png");
+        fighterSprite.load("rsc/Mekie/10 - Lose/0.png");
     }
 
     @Override

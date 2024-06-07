@@ -14,60 +14,64 @@ public class HUD {
     private Rectangle enemyHealthBar;
 
     private Text timer;
-    private Text playerName;
-    private Text enemyName;
-    private Picture playerSelect;
-    private Picture enemySelect;
+    private Picture playerName;
+    private Picture selectedPlayer;
+    private Picture enemyName;
+    private Picture selectedEnemy;
 
     private int enemyLifeBarX = 600;
     private int enemyLifeBarLifeSize = 350;
     private int playerLifeBarLifeSize = 350;
-    public HUD() {
 
+    public HUD() {
         //                                      x      y       lifeSize  height
         this.playerHealthBar = new Rectangle(90, 30, playerLifeBarLifeSize, 50);
         this.enemyHealthBar = new Rectangle(enemyLifeBarX, 30, enemyLifeBarLifeSize, 50);
         this.timer = new Text(515, 60, String.valueOf(roundTimer)); // X Y String
-        this.playerName = new Text(150, 110, "Player"); // X Y String
-        this.enemyName = new Text(850, 110, "Enemy");// X Y String
-        this.playerSelect = new Picture(20,40,"rsc/player/SelectMekie(2).png");
-        this.enemySelect = new Picture(900,40,"rsc/player/SelectMekie(2).png");
+
+        this.playerName = new Picture(100, 90, "rsc/Names/MEKIE_NAME.png"); // X Y String
+        this.enemyName = new Picture(780, 90, "rsc/Names/NOZK-NAME.png");// X Y String
+        this.selectedPlayer = new Picture(20,20,"rsc/Mekie/11 - PIC/square.png");
+        this.selectedEnemy = new Picture(900,20,"rsc/Mekie/11 - PIC/square.png");
     }
 
     public void drawHUD() {
+        delete();
+        enemyLifeBarX = 600;
+        enemyLifeBarLifeSize = 350;
+        playerLifeBarLifeSize = 350;
+        // Player Life
+        playerHealthBar = new Rectangle(90, 30, playerLifeBarLifeSize, 50);
         playerHealthBar.draw();
         playerHealthBar.setColor(Color.GREEN);
         playerHealthBar.fill();
-
+        // EnemyLife
+        enemyHealthBar = new Rectangle(enemyLifeBarX, 30, enemyLifeBarLifeSize, 50);
         enemyHealthBar.draw();
         enemyHealthBar.setColor(Color.GREEN);
         enemyHealthBar.fill();
-
+        // Timer
         timer.setColor(Color.RED);
         timer.draw();
         timer.grow(70,70);
-
-        playerName.setColor(Color.RED);
+        // Names
         playerName.draw();
-        playerName.grow(50,50);
-
-        enemyName.setColor(Color.BLUE);
+        selectedPlayer.draw();
         enemyName.draw();
-        enemyName.grow(50,50);
+        selectedEnemy.draw();
 
-        playerSelect.draw();
-        enemySelect.draw();
     }
+
     public void delete(){
         playerHealthBar.delete();
         enemyHealthBar.delete();
-
         timer.delete();
         playerName.delete();
-        playerSelect.delete();
         enemyName.delete();
-        enemySelect.delete();
+        enemyName.delete();
+        selectedEnemy.delete();
     }
+
     public void updateTimer(){
         timer.delete();
         timer = new Text(515,60,String.valueOf(roundTimer) );
@@ -75,18 +79,35 @@ public class HUD {
         timer.draw();
         timer.grow(70,70);
         roundTimer--;
-
     }
 
     public void resetRoundTimer(){
         this.roundTimer = 60;
     }
-    //when taking damage probably has to create a new rectangle, because grow will decrease from both sidesll
-    /*public int getRoundTimer(){
-        return this.roundTimer;
+
+    public void damage() {
+        enemyLifeBarX += 35;
+        enemyLifeBarLifeSize -= 35;
+        enemyHealthBar.delete();
+        enemyHealthBar = new Rectangle(enemyLifeBarX, 30, enemyLifeBarLifeSize, 50);
+        enemyHealthBar.setColor(Color.GREEN);
+        if (enemyLifeBarLifeSize <= 230) {
+            enemyHealthBar.setColor(Color.YELLOW);
+        }
+        if (enemyLifeBarLifeSize <= 90) {
+            enemyHealthBar.setColor(Color.RED);
+        }
+        System.out.println(enemyLifeBarLifeSize);
+        enemyHealthBar.draw();
+        enemyHealthBar.fill();
     }
 
 
+
+
+
+
+    /*
     public static class CountDownTimer implements Runnable{
 
         private int seconds;
@@ -112,32 +133,6 @@ public class HUD {
             }
         }
     }
-
-     */
-
-
-    public void damage() {
-        enemyLifeBarX += 35;
-        enemyLifeBarLifeSize -= 35;
-        enemyHealthBar.delete();
-        enemyHealthBar = new Rectangle(enemyLifeBarX, 30, enemyLifeBarLifeSize, 50);
-        enemyHealthBar.setColor(Color.GREEN);
-        if (enemyLifeBarLifeSize <= 230) {
-            enemyHealthBar.setColor(Color.YELLOW);
-        }
-        if (enemyLifeBarLifeSize <= 90) {
-            enemyHealthBar.setColor(Color.RED);
-        }
-        System.out.println(enemyLifeBarLifeSize);
-        enemyHealthBar.draw();
-        enemyHealthBar.fill();
-
-
-
-    }
-
-
-/*
     public void reset() {
         health = 100;
         createLifeBar();
