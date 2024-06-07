@@ -12,12 +12,14 @@ public class Background {
     Picture menu;
     private int randomLevel;
     Picture win;
+    Picture loose;
 
     public Background(){
         this.backgroundRelva = new Picture(10, 10, "rsc/BackGroundSalinha.JPG");
         this.backgroundSala = new Picture(10, 10, "rsc/BackGroundRelva.JPG");
-        this.menu = new Picture(10,10,"rsc/meno-comIntrucao.png");
+        this.menu = new Picture(10,10,"rsc/MENU.png");
         this.win = new Picture(10,10,"rsc/YouWin.jpeg");
+        this.loose = new Picture(10,10,"rsc/YouWin.jpeg");
     }
 
     public void createLevel() {
@@ -42,6 +44,10 @@ public class Background {
 
     public void showWin(){
         win.draw();
+    }
+
+    public void showLoose(){
+        loose.draw();
     }
 
     public void hideWin(){

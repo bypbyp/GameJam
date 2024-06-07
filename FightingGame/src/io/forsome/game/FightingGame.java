@@ -16,11 +16,8 @@ public class FightingGame implements KeyboardHandler {
     private int round = 3;
     private int playerWins = 0;
     private int enemyWins = 0;
-
     private Background background = new Background();
-    //private Picture level;
     private HUD gameHUD = new HUD();
-
     // Fighters Attributes
     private Player player = new Player(new Picture(200, 300, "rsc/Mekie/0 - Idle/0.png"));
     private int playerHealth = 200;
@@ -54,51 +51,43 @@ public class FightingGame implements KeyboardHandler {
 
     public void newGame() {
         background.hideMenu();
-        //level = new Picture(10, 10, "rsc/BackGroundSalinha.JPG");
-        //level.draw();
         background.createLevel();
         gameHUD.drawHUD();
-
         // Player and Enemy Creation
         player.createFighter();
         enemy.createFighter();
 
         // Main game loop:
         while (round > 0) {
-            //gameHUD.resetRoundTimer();
-            //gameHUD.delete();
             playRound();
             try {
                 Thread.sleep(1000);
+                checkCollisions();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            //Trying to fiz when finish the first game, 3 rounds.
-            if(playerWins == 2 || enemyWins == 2){
-                background.showWin();
-                gameStarted = false;
-                playerWins = 0;
-                enemyWins = 0;
-                round = 0;
-                gameStart();
-            }
         }
+        if (playerWins == 2) {
+            background.showWin();
+            return;
+        }
+        if(enemyWins == 2){
+            background.showLoose();
+            return;
+        }
+        //gameStarted = false;
+        playerWins = 0;
+        enemyWins = 0;
+        round = 3;
+        //gameStart();
     }
 
     public void playRound() {
-        //player.createFighter();
-        //enemy.createFighter();
-        playerHealth = 200;
-        enemyHealth = 200;
-        roundTime = 60;
-        timerRunning = true;
-
+        resetRound();
         // Start the timer in a separate thread
         new Thread(this::startTimer).start();
-
         while (playerHealth > 0 && enemyHealth > 0 && roundTime > 0) {
             enemy.randomMove();
-
             // Add a delay to control the game loop speed
             try {
                 Thread.sleep(300);
@@ -107,43 +96,70 @@ public class FightingGame implements KeyboardHandler {
                 e.printStackTrace();
             }
         }
-        timerRunning = false; // Stop the timer when the round ends
-
-        if (playerHealth > enemyHealth) {
-            playerWins++;
-            player.playerWon();
-            enemy.enemyLost();
-            gameHUD.resetRoundTimer(); // trying to fix the time delay
-            Picture counter = new Picture(240, 100, "rsc/player/roundcounter.png");
-            counter.draw();
+        if(enemyHealth <=0){
             try {
+                player.playerWon();
+                enemy.enemyLost();
+                playerWins++;
                 Thread.sleep(1000);
-                player.resetPosition();
-                player.createFighter();
-                enemy.resetPosition();
-                enemy.createFighter();
-                return;
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
         }
+        if(playerHealth <=0){
+            try {
+                player.playerLost();
+                enemy.enemyWon();
+                enemyWins++;
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        timerRunning = false; // Stop the timer when the round ends
+        if (playerHealth > enemyHealth) {
+            playerWins++;
+            try {
+                player.playerWon();
+                enemy.enemyLost();
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
             enemyWins++;
             enemy.enemyWon();
             player.playerLost();
-            gameHUD.resetRoundTimer(); //same as above
+        }
 
-        Picture counter = new Picture(440, 100, "rsc/player/roundcounter.png");
-            counter.draw();
-            try {
-                Thread.sleep(1000);
-                player.resetPosition();
-                player.createFighter();
-                enemy.resetPosition();
-                enemy.createFighter();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        gameHUD.resetRoundTimer(); // Reset the round timer
+        //showRoundEnd();
         round--;
+    }
+
+    private void resetRound() {
+        gameHUD.delete();
+        gameHUD.drawHUD();
+        playerHealth = 200;
+        enemyHealth = 200;
+        roundTime = 60;
+        timerRunning = true;
+        player.resetPosition();
+        enemy.resetPosition();
+        player.createFighter();
+        enemy.createFighter();
+    }
+
+    private void showRoundEnd() {
+        Picture counter = new Picture(340, 100, "rsc/player/roundcounter.png");
+        counter.draw();
+        try {
+            Thread.sleep(1000);
+            counter.delete();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     private void startTimer() {
@@ -160,13 +176,12 @@ public class FightingGame implements KeyboardHandler {
 
     private void checkCollisions() {
         if (player.getMaxX() >= enemy.getX()) {
-            if(player.isAttacking()){
+            if (player.isAttacking()) {
                 enemyHealth -= 20;
                 System.out.println(enemyHealth);
                 gameHUD.damage();   //this is to decrease size of rectangle
                 return;
             }
-            //playerHealth -= 10;
         }
     }
 
