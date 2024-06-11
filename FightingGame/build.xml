@@ -1,0 +1,61 @@
+<project name="FightingGame" basedir="." default="compile">
+
+  <!-- Set global properties for this build -->
+  <property name="src.dir"     value="src"/>
+  <property name="build.dir"   value="build"/>
+  <property name="dist.dir"    value="dist"/>
+  <property name="lib.dir"     value="lib"/>
+  <property name="main-class"  value="io.forsome.game.Main"/>
+
+  <!-- Initialize the build directory structure -->
+  <target name="init">
+    <mkdir dir="${build.dir}"/>
+    <mkdir dir="${dist.dir}"/>
+    <mkdir dir="${dist.dir}/lib"/>
+  </target>
+
+  <!-- Clean the build directory -->
+  <target name="clean">
+    <delete dir="${build.dir}"/>
+    <delete dir="${dist.dir}"/>
+  </target>
+
+  <!-- Compile the source code into the build directory -->
+  <target name="compile" depends="init">
+    <javac srcdir="${src.dir}" destdir="${build.dir}" includeantruntime="false">
+      <classpath>
+        <fileset dir="${lib.dir}">
+          <include name="**/*.jar"/>
+        </fileset>
+      </classpath>
+      <compilerarg value="--release"/>
+      <compilerarg value="14"/>
+    </javac>
+    <!-- Copy resources to build directory -->
+    <copy todir="${build.dir}">
+      <fileset dir="${src.dir}" includes="**/*"/>
+    </copy>
+  </target>
+
+  <!-- Create the distribution directory and jar the compiled code along with dependencies -->
+  <target name="dist" depends="compile">
+    <jar destfile="${dist.dir}/FightingGame.jar">
+      <!-- Include compiled classes and resources -->
+      <fileset dir="${build.dir}" includes="**/*"/>
+      <!-- Include libraries -->
+      <zipgroupfileset dir="${lib.dir}" includes="**/*.jar"/>
+      <!-- Manifest -->
+      <manifest>
+        <attribute name="Main-Class" value="${main-class}"/>
+      </manifest>
+    </jar>
+  </target>
+
+  <!-- Clean, compile, and build the project -->
+  <target name="all" depends="clean,dist"/>
+
+  <!-- Run the application -->
+  <target name="run" depends="dist">
+    <java jar="${dist.dir}/FightingGame.jar" fork="true"/>
+  </target>
+</project>
