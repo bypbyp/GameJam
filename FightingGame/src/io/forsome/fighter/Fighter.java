@@ -17,10 +17,10 @@ public abstract class Fighter {
     public abstract void crouch();
 
     // Skills
-    public abstract void lightPunch();
-    public abstract void heavyPunch();
-    public abstract void lightKick();
-    public abstract void heavyKick();
+    public abstract void highPunch();
+    public abstract void lowPunch();
+    public abstract void highKick();
+    public abstract void lowKick();
 
     // Other Methods
     public abstract void resetPosition();

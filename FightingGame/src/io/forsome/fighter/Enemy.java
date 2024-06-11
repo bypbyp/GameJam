@@ -1,108 +1,174 @@
 package io.forsome.fighter;
 
-import io.forsome.game.Background;
+import io.forsome.game.FightingGame;
 import org.academiadecodigo.simplegraphics.pictures.*;
 
-public class Enemy extends Fighter{
+public class Enemy extends Fighter {
 
+    // Attributes:
     private Picture fighterSprite;
-    private Background playerLimit;
+    private Picture enemyName;
+    private Picture square;
+    private FightingGame fg;
+    private boolean attacking = false;
 
-    private int playerPositionX;
-    private int playerPositionY;
-
-
-    public Enemy(Picture sprite) {
+    // Constructor:
+    public Enemy(FightingGame fg, Picture sprite) {
         super(sprite);
         this.fighterSprite = sprite;
+        this.fg = fg;
+        this.enemyName = new Picture(600, 100, fg.getEnemySprites()[12]); // X Y String
+        this.square = new Picture(900, 100, fg.getEnemySprites()[11]);
+        enemyName.grow(-22,-22);
     }
 
     @Override
-    public void createFighter(){
-        fighterSprite = new Picture(700,300,"rsc/Mekie/0 - Idle/0.png");
+    public void createFighter() {
+        fighterSprite = new Picture(700, 250, fg.getEnemySprites()[0]);
+        this.enemyName = new Picture(600, 100, fg.getEnemySprites()[12]); // X Y String
+        this.square = new Picture(900, 100, fg.getEnemySprites()[11]);
+        enemyName.grow(-22,-22);
         fighterSprite.draw();
+        enemyName.draw();
+        square.draw();
     }
 
     @Override
     public void resetPosition() {
         fighterSprite.delete();
-        //createFighter();
+        enemyName.delete();
+        square.delete();
     }
 
-    public void moveRight(){
-        if(getMaxX() <= 1020){
-            fighterSprite.translate(30,0);
+    public boolean isAttacking() {
+        return attacking;
+    }
+
+    public void moveRight() {
+        if (getMaxX() <= 980) {
+            fighterSprite.translate(30, 0);
+            fg.enemyCheckCollision();
         }
     }
 
-    public void moveLeft(){
-        if(getX() >= 40){
-            fighterSprite.translate(-30,0);
+    public void moveLeft() {
+        if (getX() >= 40 && fg.getEnemyX() >= fg.getPlayerMaxX()) {
+            fighterSprite.translate(-30, 0);
+            fg.enemyCheckCollision();
         }
     }
 
     public void jump() {
+        fighterSprite.load(fg.getEnemySprites()[6]);
         fighterSprite.translate(0, -10);
         fighterSprite.translate(0, -10);
         fighterSprite.translate(0, -10);
-        land();
-        System.out.println("Enemy jumped");
+        try {
+            Thread.sleep(200);
+            land();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        fg.enemyCheckCollision();
     }
+
     public void standUp() {
-        fighterSprite.translate(0, 0);
+        fighterSprite.load(fg.getEnemySprites()[0]);
     }
 
     public void land() {
         fighterSprite.translate(0, 30);
+        fighterSprite.load(fg.getEnemySprites()[0]);
     }
 
-    public void crouch(){
-        fighterSprite.translate(0,0);
-        standUp();
+    public void crouch() {
+        fighterSprite.load(fg.getEnemySprites()[3]);
+        try {
+            Thread.sleep(100);
+            standUp();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        fg.enemyCheckCollision();
     }
 
-    public void lightPunch(){
-        System.out.println(getClass().getSimpleName() + "  lightPunch");
+    public void highPunch() {
+        attacking = true;
+        fighterSprite.load(fg.getEnemySprites()[1]);
+        try {
+            Thread.sleep(100);
+            fg.enemyCheckCollision();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } finally {
+            attacking = false;
+        }
     }
 
-    public void heavyPunch(){
-        System.out.println(getClass().getSimpleName() + " heavyPunch");
+    public void lowPunch() {
+        attacking = true;
+        fighterSprite.load(fg.getEnemySprites()[4]);
+        try {
+            Thread.sleep(100);
+            fg.enemyCheckCollision();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } finally {
+            attacking = false;
+        }
     }
 
-    public void lightKick(){
-        System.out.println(getClass().getSimpleName() + " lightKick");
+    public void highKick() {
+        attacking = true;
+        fighterSprite.load(fg.getEnemySprites()[2]);
+        try {
+            Thread.sleep(100);
+            fg.enemyCheckCollision();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } finally {
+            attacking = false;
+        }
     }
 
-    public void heavyKick(){
-        System.out.println("heavyKick");
+    public void lowKick() {
+        attacking = true;
+        fighterSprite.load(fg.getEnemySprites()[5]);
+        try {
+            Thread.sleep(100);
+            fg.enemyCheckCollision();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } finally {
+            attacking = false;
+        }
     }
 
-    public void randomMove(){
-        int randomNumber = (int)Math.floor(Math.random()*8);
-        switch (randomNumber){
+    public void randomMove() {
+        int randomNumber = (int) Math.floor(Math.random() * 12);
+        switch (randomNumber) {
             case 1 -> moveRight();
             case 2 -> moveLeft();
             case 3 -> jump();
             case 4 -> crouch();
-            case 5 -> lightPunch();
-            case 6 -> lightKick();
-            case 7 -> heavyKick();
-            case 8 -> heavyPunch();
+            case 5 -> highPunch();
+            case 6 -> highKick();
+            case 7 -> lowKick();
+            case 8 -> lowPunch();
+            case 9 -> moveLeft();
+            case 10 -> moveLeft();
+            case 11 -> highPunch();
+            case 12 -> highKick();
         }
     }
-    // method that will check if he is attacking, have to implement.
-    /* public boolean isAttacking(){
-        return attacking;
+
+    public void enemyWon() {
+        fighterSprite.translate(0,-20);
+        fighterSprite.load(fg.getEnemySprites()[9]);
     }
 
-     */
-
-    public void enemyWon(){
-        fighterSprite.load("rsc/Mekie/9 - Win/0.png");
-    }
-
-    public void enemyLost(){
-        fighterSprite.load("rsc/Mekie/10 - Lose/0.png");
+    public void enemyLost() {
+        fighterSprite.load(fg.getEnemySprites()[10]);
     }
 
     @Override
@@ -124,5 +190,4 @@ public class Enemy extends Fighter{
     public int getMaxY() {
         return fighterSprite.getMaxY();
     }
-
 }

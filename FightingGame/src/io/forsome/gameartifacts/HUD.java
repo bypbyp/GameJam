@@ -9,30 +9,25 @@ import org.academiadecodigo.simplegraphics.graphics.Text;
 public class HUD {
 
     private int roundTimer = 60;
-
     private Rectangle playerHealthBar;
     private Rectangle enemyHealthBar;
-
     private Text timer;
-    private Picture playerName;
-    private Picture selectedPlayer;
-    private Picture enemyName;
-    private Picture selectedEnemy;
-
     private int enemyLifeBarX = 600;
     private int enemyLifeBarLifeSize = 350;
     private int playerLifeBarLifeSize = 350;
+    private FightingGame fg;
+    private Picture roundCounter;
+    private Picture enemyRoundCounter;
 
-    public HUD() {
+    public HUD(FightingGame fg) {
         //                                      x      y       lifeSize  height
         this.playerHealthBar = new Rectangle(90, 30, playerLifeBarLifeSize, 50);
         this.enemyHealthBar = new Rectangle(enemyLifeBarX, 30, enemyLifeBarLifeSize, 50);
         this.timer = new Text(515, 60, String.valueOf(roundTimer)); // X Y String
         timer.grow(70,70);
-        this.playerName = new Picture(150, 100, "rsc/Names/MEKIE_NAME.png"); // X Y String
-        this.enemyName = new Picture(710, 100, "rsc/Names/NOZK-NAME.png");// X Y String
-        this.selectedPlayer = new Picture(40,100,"rsc/Mekie/11 - PIC/square.png");
-        this.selectedEnemy = new Picture(900,100,"rsc/Mekie/11 - PIC/square.png");
+        this.fg = fg;
+        this.roundCounter = new Picture(30,30, "rsc/GameArtifacts/RoundCounter.png");
+        this.enemyRoundCounter = new Picture(975,30, "rsc/GameArtifacts/RoundCounter.png");
     }
 
     public void drawHUD() {
@@ -53,22 +48,12 @@ public class HUD {
         // Timer
         timer.setColor(Color.RED);
         timer.draw();
-        // Names
-        playerName.draw();
-        selectedPlayer.draw();
-        enemyName.draw();
-        selectedEnemy.draw();
-
     }
 
     public void delete(){
         playerHealthBar.delete();
         enemyHealthBar.delete();
         timer.delete();
-        playerName.delete();
-        enemyName.delete();
-        enemyName.delete();
-        selectedEnemy.delete();
     }
 
     public void updateTimer(){
@@ -84,7 +69,7 @@ public class HUD {
         this.roundTimer = 60;
     }
 
-    public void damage() {
+    public void enemyDamage() {
         enemyLifeBarX += 35;
         enemyLifeBarLifeSize -= 35;
         enemyHealthBar.delete();
@@ -96,47 +81,41 @@ public class HUD {
         if (enemyLifeBarLifeSize <= 90) {
             enemyHealthBar.setColor(Color.RED);
         }
-        System.out.println(enemyLifeBarLifeSize);
+        //System.out.println(enemyLifeBarLifeSize);
         enemyHealthBar.draw();
         enemyHealthBar.fill();
     }
 
-
-
-
-
-
-    /*
-    public static class CountDownTimer implements Runnable{
-
-        private int seconds;
-        private int timer;
-
-        public CountDownTimer(){
-            this.seconds = 10;
+    public void playerDamage() { // Need to be updated!
+        playerLifeBarLifeSize -= 35;
+        playerHealthBar.delete();
+        playerHealthBar = new Rectangle(90, 30, playerLifeBarLifeSize, 50);
+        playerHealthBar.setColor(Color.GREEN);
+        if (playerLifeBarLifeSize <= 230) {
+            playerHealthBar.setColor(Color.YELLOW);
         }
-
-        public int getTimer() {
-            return timer;
+        if (playerLifeBarLifeSize <= 90) {
+            playerHealthBar.setColor(Color.RED);
         }
-
-        @Override
-        public void run() {
-            for(int i = seconds; i >= 0; i--){
-                try {
-                    Thread.sleep(1000);
-                    timer = i;
-                } catch (InterruptedException e) {
-                    System.out.println(e);
-                }
-            }
-        }
+        //System.out.println(playerLifeBarLifeSize);
+        playerHealthBar.draw();
+        playerHealthBar.fill();
     }
-    public void reset() {
-        health = 100;
-        createLifeBar();
-        //lifeBar.setSize(100, 10);
+
+    public void roundCounter(){
+        roundCounter.draw();
     }
-     */
+
+    public void deleteRoundCounter(){
+        roundCounter.delete();
+    }
+
+    public void enemyRoundCounter(){
+        enemyRoundCounter.draw();
+    }
+
+    public void deleteEnemyRoundCounter(){
+        enemyRoundCounter.delete();
+    }
 
 }

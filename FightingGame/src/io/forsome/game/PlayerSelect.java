@@ -1,5 +1,6 @@
 package io.forsome.game;
 
+import io.forsome.gameartifacts.Music;
 import org.academiadecodigo.simplegraphics.keyboard.Keyboard;
 import org.academiadecodigo.simplegraphics.keyboard.KeyboardEvent;
 import org.academiadecodigo.simplegraphics.keyboard.KeyboardEventType;
@@ -12,18 +13,19 @@ public class PlayerSelect implements KeyboardHandler {
     Picture arrow;
     private boolean selected = false;
     private Keyboard keyboard;
+    private static final String MENU_SELECTION = "rsc/Sounds/menuSelection.wav";
 
     public PlayerSelect() {
-        this.background = new Picture(10, 10, "rsc/PlayerSelection.png");
-        this.arrow = new Picture(70, 80, "rsc/arrow.png");
+        this.background = new Picture(10, 10, "rsc/GameArtifacts/PlayerSelection.png");
+        this.arrow = new Picture(10, 60, "rsc/GameArtifacts/arrow.png");
         this.keyboard = new Keyboard(this);
         addKeyboard();
         background.draw();
-        arrow.grow(-80,-80);
+        arrow.grow(-80, -80);
         arrow.draw();
     }
 
-    public void selection() {
+    public int selection() {
         while (!selected) {
             // wait for player select;
             try {
@@ -32,16 +34,47 @@ public class PlayerSelect implements KeyboardHandler {
                 e.printStackTrace();
             }
         }
-        background.delete();
-        arrow.delete();
+        int choice = 0;
+        switch (arrow.getX()) {
+            case 90:
+                background.delete();
+                arrow.delete();
+                choice = 1;
+                break;
+            case 326:
+                background.delete();
+                arrow.delete();
+                choice = 2;
+                break;
+            case 562:
+                background.delete();
+                arrow.delete();
+                choice = 3;
+                break;
+            case 798:
+                background.delete();
+                arrow.delete();
+                choice = 3;
+                break;
+            default:
+                choice = 1;
+                break;
+        }
+        return choice;
     }
 
-    public void moveLeft(){
-        arrow.translate(-210,0);
+    public void moveLeft() {
+        if ((background.getX() + 236) < arrow.getX()) {
+            arrow.translate(-236, 0);
+            Music.menuSelection(MENU_SELECTION);
+        }
     }
 
-    public void moveRight(){
-        arrow.translate(210,0);
+    public void moveRight() {
+        if ((background.getMaxX() - 236) >= arrow.getMaxX()) {
+            arrow.translate(236, 0);
+            Music.menuSelection(MENU_SELECTION);
+        }
     }
 
     public void addKeyboard() {
@@ -78,4 +111,5 @@ public class PlayerSelect implements KeyboardHandler {
     public void keyReleased(KeyboardEvent keyboardEvent) {
 
     }
+
 }

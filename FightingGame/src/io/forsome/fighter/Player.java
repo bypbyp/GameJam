@@ -1,41 +1,51 @@
 package io.forsome.fighter;
 
-import io.forsome.game.Background;
-import io.forsome.gameartifacts.HUD;
+import io.forsome.game.FightingGame;
 import org.academiadecodigo.simplegraphics.keyboard.*;
 import org.academiadecodigo.simplegraphics.pictures.Picture;
-import io.forsome.fighter.Enemy;
 
 
 public class Player extends Fighter implements KeyboardHandler {
 
     private Keyboard keyboard;
     private Picture fighterSprite;
-
     private boolean jumping = false;
     private boolean crouching = false;
     private boolean attacking = false;
+    private Picture playerName;
+    private Picture square;
+    private FightingGame fg;
 
-    public Player(Picture sprite) {
+    public Player(FightingGame fg, Picture sprite) {
         super(sprite);
         this.fighterSprite = sprite;
+        this.fg = fg;
         this.keyboard = new Keyboard(this);
+        this.playerName = new Picture(150, 100, fg.getPlayerSprites()[12]); // X Y String
+        this.square = new Picture(40,100,fg.getPlayerSprites()[11]);
+        playerName.grow(-22,-22);
         addKeyboard();
-        //this.enemy = new Enemy(fighterSprite);
     }
 
     @Override
     public void createFighter() {
-        fighterSprite = new Picture(200, 300, "rsc/Mekie - Left/0 - Idle/0.png");
+        fighterSprite = new Picture(200,250,fg.getPlayerSprites()[0]);
+        this.playerName = new Picture(150, 100, fg.getPlayerSprites()[12]); // X Y String
+        this.square = new Picture(40,100,fg.getPlayerSprites()[11]);
+        playerName.grow(-22,-22);
         fighterSprite.draw();
+        playerName.draw();
+        square.draw();
+    }
 
+    public void deleteNameAndSquare(){
+        square.delete();
+        playerName.delete();
     }
 
     @Override
     public void resetPosition() {
-        //fighterSprite.translate(playerLimits.getX() - fighterSprite.getX(),playerLimits.getY() - fighterSprite.getY());
         fighterSprite.delete();
-        //createFighter();
     }
 
     public void addKeyboard() {
@@ -64,33 +74,24 @@ public class Player extends Fighter implements KeyboardHandler {
     }
 
     public void moveRight() {
-        fighterSprite.translate(30, 0);
+        if(fg.getPlayerMaxX()<=fg.getEnemyX()) {
+            fighterSprite.translate(30, 0);
+        }
     }
 
     public void moveLeft() {
         fighterSprite.translate(-30, 0);
     }
 
-    public void jump() {
-        fighterSprite.translate(0, -10);
-        fighterSprite.translate(0, -10);
-        fighterSprite.translate(0, -10);
+    public void jump() {        //has to improve our jump, maybe we can put more images???
+        fighterSprite.load(fg.getPlayerSprites()[6]);
+        fighterSprite.translate(0, -20);
+        fighterSprite.translate(0, -20);
+        fighterSprite.translate(0, -20);
     }
 
     public void crouch() {
-        fighterSprite.translate(0, 0);
-    }
-
-    public void standUp() {
-        fighterSprite.translate(0, 0);
-    }
-
-    public void land() {
-        fighterSprite.translate(0, 30);
-    }
-
-    public void lightPunch() {
-        fighterSprite.load("rsc/Mekie - Left/1 - High Punch/3.png");
+        fighterSprite.load(fg.getPlayerSprites()[3]);
         try {
             Thread.sleep(100);
         } catch (InterruptedException e) {
@@ -98,16 +99,55 @@ public class Player extends Fighter implements KeyboardHandler {
         }
     }
 
-    public void heavyPunch() {
-        System.out.println("heavyPunch");
+    public void standUp() {
+        fighterSprite.translate(0, 0);
     }
 
-    public void lightKick() {
-        System.out.println("lightKick");
+    public void land() {
+        try {
+            Thread.sleep(300);
+            fighterSprite.translate(0, 60);
+            jumping = false;
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
-    public void heavyKick() {
-        System.out.println("heavyKick");
+    public void highPunch() {
+        fighterSprite.load(fg.getPlayerSprites()[1]);
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void lowPunch() {
+        fighterSprite.load(fg.getPlayerSprites()[4]);
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void highKick() {
+        fighterSprite.load(fg.getPlayerSprites()[2]);
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void lowKick() {
+        fighterSprite.load(fg.getPlayerSprites()[5]);
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -135,64 +175,67 @@ public class Player extends Fighter implements KeyboardHandler {
     }
 
     public void playerWon() {
-        fighterSprite.load("rsc/Mekie/9 - Win/0.png");
+
+        fighterSprite.load(fg.getPlayerSprites()[9]);
     }
 
     public void playerLost() {
-        fighterSprite.load("rsc/Mekie/10 - Lose/0.png");
+        fighterSprite.load(fg.getPlayerSprites()[10]);
     }
+
 
     @Override
     public void keyPressed(KeyboardEvent keyboardEvent) {
         switch (keyboardEvent.getKey()) {
             case KeyboardEvent.KEY_D:
-                if (!jumping && !crouching && getMaxX() <= 1020) {
-                    //if(getMaxX() <= enemy.getX() ){
+                if (!crouching && getMaxX() <= 1020) {
                     moveRight();
-                    // }
-
                 }
                 break;
             case KeyboardEvent.KEY_A:
-                if (!jumping && !crouching && getX() >= 40) {
+                if (!crouching && getX() >= 40) {
                     moveLeft();
                 }
                 break;
             case KeyboardEvent.KEY_W:
                 if (!jumping && !attacking) {
+                    fighterSprite.load(fg.getPlayerSprites()[6]);
                     jump();
                     jumping = true;
                 }
                 break;
             case KeyboardEvent.KEY_S:
                 if (!jumping && !attacking) {
+                    fighterSprite.load(fg.getPlayerSprites()[3]);
                     crouch();
                     crouching = true;
                 }
                 break;
             case KeyboardEvent.KEY_H:
-                if (!attacking) {
-                    fighterSprite.load("rsc/Mekie - Left/1 - High Punch/3.png");
-                    //punchHigh();
-                    lightPunch();
+                if (!jumping && !attacking && !crouching) {
+                    fighterSprite.load(fg.getPlayerSprites()[1]);
+                    highPunch();
                     attacking = true;
                 }
                 break;
             case KeyboardEvent.KEY_J:
-                if (!attacking) {
-                    heavyPunch();
+                if (!jumping && !attacking && crouching) {
+                    fighterSprite.load(fg.getPlayerSprites()[4]);
+                    lowPunch();
                     attacking = true;
                 }
                 break;
             case KeyboardEvent.KEY_K:
-                if (!attacking) {
-                    lightKick();
+                if (!jumping && !attacking && !crouching) {
+                    fighterSprite.load(fg.getPlayerSprites()[2]);
+                    highKick();
                     attacking = true;
                 }
                 break;
             case KeyboardEvent.KEY_L:
-                if (!attacking) {
-                    heavyKick();
+                if (!jumping && !attacking && crouching) {
+                    fighterSprite.load(fg.getPlayerSprites()[5]);
+                    lowKick();
                     attacking = true;
                 }
                 break;
@@ -204,78 +247,67 @@ public class Player extends Fighter implements KeyboardHandler {
         switch (keyboardEvent.getKey()) {
             case KeyboardEvent.KEY_W:
                 if (jumping) {
+                    fighterSprite.load(fg.getPlayerSprites()[0]);
                     land();
                     jumping = false;
                 }
                 break;
+
+
             case KeyboardEvent.KEY_S:
                 if (crouching) {
+                    fighterSprite.load(fg.getPlayerSprites()[0]);
                     standUp();
                     crouching = false;
                 }
                 break;
             case KeyboardEvent.KEY_H:
-
-                try {
-                    Thread.sleep(200);
-                    fighterSprite.load("rsc/Mekie - Left/0 - Idle/0.png"); // Delay for 2000 milliseconds (2 seconds)
-                    attacking = false;
-                    break;
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                if(attacking && !crouching){
+                    try {
+                        Thread.sleep(200);
+                        fighterSprite.load(fg.getPlayerSprites()[0]);
+                        attacking = false;
+                        break;
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
+
             case KeyboardEvent.KEY_J:
-                attacking = false;
-                break;
+                if(attacking && crouching){
+                    try {
+                        Thread.sleep(200);
+                        fighterSprite.load(fg.getPlayerSprites()[3]);
+                        attacking = false;
+                        break;
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+            }
+
             case KeyboardEvent.KEY_K:
-                attacking = false;
-                break;
+                if(attacking && !crouching){
+                    try {
+                        Thread.sleep(200);
+                        fighterSprite.load(fg.getPlayerSprites()[0]);
+                        attacking = false;
+                        break;
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+
             case KeyboardEvent.KEY_L:
-                attacking = false;
-                break;
+                if(attacking && crouching){
+                    try {
+                        Thread.sleep(200);
+                        fighterSprite.load(fg.getPlayerSprites()[3]);
+                        attacking = false;
+                        break;
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
         }
     }
-/*
-    public void punchHigh() {
-        fighterSprite.load("rsc/Mekie/1 - High Punch/1.png");
-        try {
-            Thread.sleep(200); // Delay for 2000 milliseconds (2 seconds)
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        fighterSprite.load("rsc/Mekie/1 - High Punch/1.png");
-        try {
-            Thread.sleep(200); // Delay for 2000 milliseconds (2 seconds)
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        fighterSprite.load("rsc/Mekie/1 - High Punch/2.png");
-        try {
-            Thread.sleep(200); // Delay for 2000 milliseconds (2 seconds)
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        fighterSprite.load("rsc/Mekie/1 - High Punch/3.png");
-        try {
-            Thread.sleep(200); // Delay for 2000 milliseconds (2 seconds)
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        fighterSprite.load("rsc/Mekie/1 - High Punch/4.png");
-        try {
-            Thread.sleep(200); // Delay for 2000 milliseconds (2 seconds)
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        fighterSprite.load("rsc/Mekie/1 - High Punch/5.png");
-        try {
-            Thread.sleep(200); // Delay for 2000 milliseconds (2 seconds)
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }*/
 }
